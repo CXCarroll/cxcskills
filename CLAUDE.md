@@ -31,3 +31,13 @@ Every skill that dispatches a subagent says to start it with a fresh context win
 ### Triage labels
 
 Canonical names, unchanged. See `docs/agents/triage-labels.md`. Issues are judged against [`SCOPE.md`](./SCOPE.md).
+
+## This fork (cxcskills)
+
+This repo is a fork of `mattpocock/skills`; the `upstream` remote points at Matt's repo. Keep edits to Matt's files small, and record every one in [`CUSTOMIZATIONS.md`](./CUSTOMIZATIONS.md) so merging upstream stays easy.
+
+`skills/cxc/` is a **promoted** bucket here, like `engineering/` and `productivity/`: each skill in it needs an entry in `.claude-plugin/plugin.json`, a link in the top-level `README.md` and in `skills/cxc/README.md`, a docs page at `docs/cxc/<skill-name>.md`, and a place in `ask-matt`'s "Additions in this fork" section. The `docs/cxc/` pages are not published on aihero.dev, so they link Matt's skills to `https://aihero.dev/skills-<name>` and the fork's skills by repo-relative path.
+
+Bump the `-cxc.<n>` suffix of `version` in `.claude-plugin/plugin.json` after any change that installed plugins should pick up. Leave `package.json` as upstream's.
+
+Every adapted skill names its source in `metadata.credits`, and [`THIRD_PARTY_NOTICES.md`](./THIRD_PARTY_NOTICES.md) carries the source licences.

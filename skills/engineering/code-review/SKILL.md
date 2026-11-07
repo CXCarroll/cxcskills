@@ -35,6 +35,8 @@ Look for the originating spec, in this order:
 
 Search the repo for every file that documents how code should be written. When `CODING_STANDARDS.md` or `CONTRIBUTING.md` exists, it must be on the list.
 
+When the diff touches `.ts`, `.tsx` or `.svelte` files, call the Skill tool with "typescript-best-practices" and add its rules to the list. Paste its Rules table into the Standards sub-agent's prompt, since the sub-agent has no other access to it. A documented repo standard overrides it, like the baseline below.
+
 On top of whatever the repo documents, the Standards axis always carries the **smell baseline** below: a fixed set of Fowler code smells (_Refactoring_, ch.3) that applies even when a repo documents nothing. Two rules bind it:
 
 - **The repo overrides.** A documented repo standard always wins; where it endorses something the baseline would flag, suppress the smell.

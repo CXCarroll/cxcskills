@@ -1,0 +1,5 @@
+interface:
+  display_name: "Council"
+  short_description: "Review with three providers until they agree"
+policy:
+  allow_implicit_invocation: false

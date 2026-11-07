@@ -95,3 +95,13 @@ Off the main flow entirely.
 ## Precondition
 
 **`/setup-matt-pocock-skills`**: run before your first engineering flow to configure the issue tracker, triage labels, and doc layout the other skills assume. Custom issue trackers also work.
+
+## Additions in this fork (cxcskills)
+
+Five skills from `skills/cxc/`, each slotting into the map above.
+
+- **`/sol-loop`**: a second opinion from another provider on the diff, after **`/code-review`** and before **`/pr`**. One reviewer (OpenAI's Sol through the Codex CLI), a budget of 3 rounds, and a standing order to keep the diff small.
+- **`/council`**: the heavier version: three models from three providers review the same change and score it out of 10, looping until they agree or the budget runs out. Reach for it on changes where a miss is expensive (auth, payments, data migrations).
+- **`/blast-radius`**: before merging a small diff you don't trust. `/code-review` asks whether the diff is built right; blast radius asks what it breaks *outside* the diff, and proves the one fact it is safe because of by running code.
+- **`/typescript-best-practices`**: vocabulary underneath, beside `/codebase-design`. Model-invoked while writing TypeScript or Svelte, and `/code-review` loads it for any TypeScript diff.
+- **`/model-delegates`**: the machinery `/sol-loop`, `/council` and `/blast-radius` use to reach other providers' models, read-only. Its settings (which models, which CLI for the third provider) live in a `## Model delegates` section of `CLAUDE.md` or `AGENTS.md`.

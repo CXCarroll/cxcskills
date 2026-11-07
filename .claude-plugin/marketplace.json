@@ -1,15 +1,14 @@
 {
-  "name": "mattpocock",
+  "name": "cxcskills",
   "owner": {
-    "name": "Matt Pocock",
-    "url": "https://www.aihero.dev"
+    "name": "CXCarroll"
   },
-  "description": "Matt Pocock's skills for real engineering, as an installable Claude Code plugin.",
+  "description": "CXCarroll's fork of Matt Pocock's skills, as an installable Claude Code plugin.",
   "plugins": [
     {
-      "name": "mattpocock-skills",
+      "name": "cxcskills",
       "source": "./",
-      "description": "Matt Pocock's agent skills for real engineering (grilling, spec/ticket flows, TDD, code review, domain modelling and more).",
+      "description": "Matt Pocock's agent skills plus TypeScript best practices, blast radius, sol-loop, council and model delegates.",
       "category": "engineering",
       "keywords": [
         "engineering",

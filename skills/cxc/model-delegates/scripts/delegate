@@ -1,0 +1,263 @@
+#!/usr/bin/env bash
+# delegate: run one read-only task on a model from another provider, and keep a record of it.
+#
+#   delegate run --provider codex [--model SLUG] [--effort LEVEL] --brief FILE
+#                [--repo DIR] [--label NAME] [--timeout SECONDS]
+#   delegate run --provider cmd --command 'CLI ARGS' --brief FILE
+#                [--repo DIR] [--label NAME] [--timeout SECONDS]
+#   delegate fingerprint [--repo DIR]
+#   delegate --help
+#
+# run
+#   Copies FILE into a new run folder, runs the provider from DIR (default: the current
+#   directory), and writes reply.md and meta.txt into the run folder. Nothing is written
+#   inside DIR. Prints "run: <folder>" first, then "reply: <file>" and "meta: <file>".
+#
+#   codex  Runs `codex exec --sandbox read-only --skip-git-repo-check --json -o <reply>`
+#          with the brief as the prompt. --model adds `--model SLUG`. Without it Codex uses
+#          the model from its own config, which meta.txt records when config.toml names one.
+#          --effort adds `-c model_reasoning_effort=LEVEL`.
+#   cmd    Runs COMMAND with bash. The brief arrives on stdin and its path is in
+#          $CXC_BRIEF_FILE. Stdout is the reply. COMMAND must be read-only on its own:
+#          the guard below is the only check this script can make.
+#
+#   The guard fingerprints DIR's git working tree (HEAD, status, diffs, untracked file
+#   contents) before and after the run. A changed tree fails the run with exit 3.
+#   --timeout (default 1800) stops the provider after SECONDS and fails the run.
+#
+# fingerprint
+#   Prints the guard's fingerprint of DIR, so a caller can guard a delegate this script
+#   does not start (a Claude Code subagent, for one): take it before and after, compare.
+#
+# Exit codes
+#   0  reply written
+#   1  the provider failed, timed out, or replied with nothing
+#   2  bad arguments, a missing brief, or a missing CLI
+#   3  the working tree changed during the run: read-only was broken
+#
+# Run folders live under $CXC_DELEGATE_DIR (default: ${TMPDIR:-/tmp}/cxc-delegates).
+# Written for bash 3.2 (macOS) and later.
+
+set -u
+
+usage() {
+  sed -n '2,/^# Written for/p' "$0" | sed 's/^# \{0,1\}//'
+}
+
+die() {
+  echo "delegate: $1" >&2
+  exit "${2:-2}"
+}
+
+fingerprint() {
+  local dir=$1
+  if ! git -C "$dir" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    echo "not-a-git-work-tree"
+    return 0
+  fi
+  {
+    git -C "$dir" rev-parse HEAD 2>/dev/null
+    git -C "$dir" --no-optional-locks status --porcelain=v1 --untracked-files=all
+    git -C "$dir" --no-optional-locks diff --no-ext-diff --binary
+    git -C "$dir" --no-optional-locks diff --cached --no-ext-diff --binary
+    git -C "$dir" ls-files --others --exclude-standard -z | while IFS= read -r -d '' f; do
+      printf '%s ' "$f"
+      git -C "$dir" hash-object -- "$f"
+    done
+  } | git hash-object --stdin
+}
+
+codex_config_model() {
+  local config="${CODEX_HOME:-$HOME/.codex}/config.toml"
+  [ -f "$config" ] || return 0
+  sed -n 's/^[[:space:]]*model[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' "$config" | head -n 1
+}
+
+run_with_timeout() {
+  local seconds=$1
+  shift
+  set -m
+  "$@" &
+  local worker=$!
+  set +m
+  (
+    trap 'kill "$sleeper" 2>/dev/null; exit 0' TERM
+    sleep "$seconds" &
+    sleeper=$!
+    wait "$sleeper"
+    echo "timed out after ${seconds}s" >"$run/timed-out"
+    kill -TERM -- "-$worker" 2>/dev/null || kill -TERM "$worker" 2>/dev/null
+  ) >/dev/null 2>&1 &
+  local watchdog=$!
+  wait "$worker"
+  local status=$?
+  kill -TERM "$watchdog" 2>/dev/null
+  wait "$watchdog" 2>/dev/null
+  return "$status"
+}
+
+provider_codex() {
+  local args
+  args=(exec --sandbox read-only --skip-git-repo-check --json -o "$run/reply.md")
+  if [ -n "$model" ]; then
+    args+=(--model "$model")
+  fi
+  if [ -n "$effort" ]; then
+    args+=(-c "model_reasoning_effort=$effort")
+  fi
+  printf '%q ' codex "${args[@]}" >"$run/command.txt"
+  # shellcheck disable=SC2016
+  echo '"$(cat brief.md)"' >>"$run/command.txt"
+  (cd "$repo" && exec codex "${args[@]}" "$(cat "$run/brief.md")") \
+    <"/dev/null" >"$run/events.jsonl" 2>"$run/stderr.log"
+}
+
+provider_cmd() {
+  printf '%s\n' "$command" >"$run/command.txt"
+  # shellcheck disable=SC2094
+  (cd "$repo" && CXC_BRIEF_FILE="$run/brief.md" exec bash -c "$command") \
+    <"$run/brief.md" >"$run/reply.md" 2>"$run/stderr.log"
+}
+
+cmd_fingerprint() {
+  local dir=.
+  while [ $# -gt 0 ]; do
+    case $1 in
+      --repo) [ $# -ge 2 ] || die "--repo needs a value"; dir=$2; shift 2 ;;
+      *) die "unknown argument for fingerprint: $1" ;;
+    esac
+  done
+  [ -d "$dir" ] || die "no such directory: $dir"
+  fingerprint "$dir"
+}
+
+cmd_run() {
+  provider="" model="" effort="" brief="" repo="." label="delegate" timeout=1800 command=""
+  while [ $# -gt 0 ]; do
+    case $1 in
+      --provider|--model|--effort|--brief|--repo|--label|--timeout|--command)
+        [ $# -ge 2 ] || die "$1 needs a value"
+        case $1 in
+          --provider) provider=$2 ;;
+          --model) model=$2 ;;
+          --effort) effort=$2 ;;
+          --brief) brief=$2 ;;
+          --repo) repo=$2 ;;
+          --label) label=$2 ;;
+          --timeout) timeout=$2 ;;
+          --command) command=$2 ;;
+        esac
+        shift 2
+        ;;
+      *) die "unknown argument for run: $1" ;;
+    esac
+  done
+
+  case $provider in
+    codex)
+      command -v codex >/dev/null 2>&1 ||
+        die "the codex CLI is not on PATH. Install the Codex CLI and sign in with ChatGPT, or name another member."
+      [ -z "$command" ] || die "--command is only for --provider cmd"
+      ;;
+    cmd)
+      [ -n "$command" ] || die "--provider cmd needs --command"
+      [ -z "$model$effort" ] || die "--model and --effort are only for --provider codex; put them in --command"
+      ;;
+    "") die "--provider is required (codex or cmd)" ;;
+    *) die "unknown provider: $provider (codex or cmd)" ;;
+  esac
+  [ -n "$brief" ] || die "--brief is required"
+  [ -f "$brief" ] || die "no such brief file: $brief"
+  [ -d "$repo" ] || die "no such directory: $repo"
+  case $timeout in
+    ''|*[!0-9]*) die "--timeout must be a whole number of seconds" ;;
+  esac
+  case $label in
+    *[!A-Za-z0-9._-]*) die "--label may use only letters, digits, dot, dash and underscore" ;;
+  esac
+  repo=$(cd "$repo" && pwd)
+
+  local brief_bytes
+  brief_bytes=$(wc -c <"$brief" | tr -d ' ')
+  if [ "$provider" = codex ] && [ "$brief_bytes" -gt 200000 ]; then
+    die "the brief is ${brief_bytes} bytes. Point the delegate at a diff command instead of pasting the diff."
+  fi
+
+  local base="${CXC_DELEGATE_DIR:-${TMPDIR:-/tmp}/cxc-delegates}"
+  run="$base/$(date +%Y%m%d-%H%M%S)-$label-$$"
+  mkdir -p "$run" || die "cannot create run folder: $run"
+  cp "$brief" "$run/brief.md"
+  echo "run: $run"
+
+  local before after status started ended
+  before=$(fingerprint "$repo")
+  started=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+  run_with_timeout "$timeout" "provider_$provider"
+  status=$?
+  ended=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+  after=$(fingerprint "$repo")
+
+  local model_note thread usage failure worktree reply_bytes
+  model_note=$model
+  if [ "$provider" = codex ] && [ -z "$model" ]; then
+    local configured
+    configured=$(codex_config_model)
+    if [ -n "$configured" ]; then
+      model_note="codex default from config.toml: $configured"
+    else
+      model_note="codex default (config.toml names none)"
+    fi
+  fi
+  if [ "$provider" = cmd ]; then
+    model_note="set by the command"
+  fi
+  thread="" usage="" failure=""
+  if [ -f "$run/events.jsonl" ]; then
+    thread=$(sed -n 's/.*"thread_id":"\([^"]*\)".*/\1/p' "$run/events.jsonl" | head -n 1)
+    usage=$(grep '"type":"turn.completed"' "$run/events.jsonl" | tail -n 1 | sed -n 's/.*"usage":\({[^}]*}\).*/\1/p')
+    failure=$(grep -E '"type":"(turn.failed|error)"' "$run/events.jsonl" | tail -n 1)
+  fi
+  worktree=unchanged
+  [ "$before" = "$after" ] || worktree=CHANGED
+  reply_bytes=0
+  [ -f "$run/reply.md" ] && reply_bytes=$(wc -c <"$run/reply.md" | tr -d ' ')
+
+  {
+    echo "provider: $provider"
+    echo "model: ${model_note:-unknown}"
+    echo "effort: ${effort:-not set}"
+    echo "label: $label"
+    echo "repo: $repo"
+    echo "started: $started"
+    echo "ended: $ended"
+    echo "exit: $status"
+    [ -f "$run/timed-out" ] && echo "timeout: $(cat "$run/timed-out")"
+    [ -n "$thread" ] && echo "thread_id: $thread"
+    echo "usage: ${usage:-not reported}"
+    [ -n "$failure" ] && echo "failure_event: $failure"
+    echo "worktree: $worktree"
+    echo "reply_bytes: $reply_bytes"
+  } >"$run/meta.txt"
+
+  echo "reply: $run/reply.md"
+  echo "meta: $run/meta.txt"
+
+  if [ "$worktree" = CHANGED ]; then
+    echo "delegate: the working tree in $repo changed during the run. Read-only was broken; inspect git status before trusting anything." >&2
+    exit 3
+  fi
+  if [ -f "$run/timed-out" ] || [ "$status" -ne 0 ] || [ "$reply_bytes" -eq 0 ]; then
+    echo "delegate: no usable reply (exit $status, ${reply_bytes} bytes). Last lines of stderr:" >&2
+    tail -n 20 "$run/stderr.log" >&2 2>/dev/null
+    exit 1
+  fi
+  exit 0
+}
+
+case ${1:-} in
+  run) shift; cmd_run ${1+"$@"} ;;
+  fingerprint) shift; cmd_fingerprint ${1+"$@"} ;;
+  -h|--help|help) usage ;;
+  "") usage >&2; exit 2 ;;
+  *) die "unknown command: $1 (run, fingerprint, --help)" ;;
+esac

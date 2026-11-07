@@ -1,13 +1,10 @@
 {
-  "name": "mattpocock-skills",
-  "version": "1.3.2",
-  "description": "Matt Pocock's agent skills for real engineering: grilling, spec/ticket flows, TDD, code review, domain modelling and more. Plug-and-play, not vibe coding.",
+  "name": "cxcskills",
+  "version": "1.3.2-cxc.1",
+  "description": "CXCarroll's fork of Matt Pocock's skills: the full engineering and productivity set, plus TypeScript best practices, blast radius, sol-loop, council and model delegates.",
   "author": {
-    "name": "Matt Pocock",
-    "url": "https://www.aihero.dev"
+    "name": "CXCarroll"
   },
-  "homepage": "https://www.aihero.dev/s/skills-newsletter",
-  "repository": "https://github.com/mattpocock/skills",
   "license": "MIT",
   "keywords": [
     "engineering",
@@ -16,7 +13,9 @@
     "code-review",
     "grilling",
     "domain-modeling",
-    "productivity"
+    "productivity",
+    "typescript",
+    "cross-model-review"
   ],
   "skills": [
     "./skills/engineering/ask-matt",
@@ -45,6 +44,11 @@
     "./skills/productivity/teach",
     "./skills/productivity/to-questionnaire",
     "./skills/productivity/wait-what",
-    "./skills/productivity/writing-for-agents"
+    "./skills/productivity/writing-for-agents",
+    "./skills/cxc/typescript-best-practices",
+    "./skills/cxc/blast-radius",
+    "./skills/cxc/sol-loop",
+    "./skills/cxc/council",
+    "./skills/cxc/model-delegates"
   ]
 }

@@ -1,3 +1,7 @@
+> **cxcskills** is CXCarroll's fork of [mattpocock/skills](https://github.com/mattpocock/skills). It ships Matt's skills, plus five more in [`skills/cxc/`](./skills/cxc/README.md): `typescript-best-practices` and `blast-radius` adapted from Lauren Tan's [pstack](https://github.com/cursor/plugins/tree/main/pstack), `sol-loop` and `council` adapted from Theo Browne's [tstack](https://github.com/t3dotgg/tstack), and `model-delegates`, which runs other providers' models for them. [CUSTOMIZATIONS.md](./CUSTOMIZATIONS.md) lists every change to Matt's files and how to pull his updates.
+>
+> The installation steps below are Matt's and install his plugin, not this fork. Install this fork with one of the two routes in [CUSTOMIZATIONS.md](./CUSTOMIZATIONS.md#install), and uninstall `mattpocock-skills` first, or every skill shows up twice.
+
 <p>
   <a href="https://www.aihero.dev/s/skills-newsletter">
     <picture>
@@ -256,3 +260,18 @@ General workflow tools, not code-specific.
 
 - **[grilling](./skills/productivity/grilling/SKILL.md)**: Interview the user relentlessly about a plan, decision, or idea until every branch of the design tree is resolved. The reusable interview primitive behind `grill-me`, `grill-with-docs`, `triage`, `wayfinder` and `improve-codebase-architecture`.
 - **[writing-for-agents](./skills/productivity/writing-for-agents/SKILL.md)**: Writing documents for agents: skills, AGENTS.md/CLAUDE.md, and any doc an agent reaches by a pointer.
+
+### cxc (this fork)
+
+Added in this fork, from [pstack](https://github.com/cursor/plugins/tree/main/pstack) and [tstack](https://github.com/t3dotgg/tstack). See [`skills/cxc/README.md`](./skills/cxc/README.md).
+
+**User-invoked**
+
+- **[sol-loop](./skills/cxc/sol-loop/SKILL.md)**: Review the current change with OpenAI's Sol model in a short loop until you both agree.
+- **[council](./skills/cxc/council/SKILL.md)**: Get a review or feedback from three models from different providers, and loop until they agree.
+- **[blast-radius](./skills/cxc/blast-radius/SKILL.md)**: Find what a change could break outside its diff, and prove the one fact it is safe because of by running real code.
+
+**Model-invoked**
+
+- **[typescript-best-practices](./skills/cxc/typescript-best-practices/SKILL.md)**: Type-design rules for TypeScript and Svelte: discriminated unions, branded IDs from a verifying parse, parsing at boundaries, no `as` or `!`, exhaustive switches. `code-review` loads it for TypeScript diffs.
+- **[model-delegates](./skills/cxc/model-delegates/SKILL.md)**: Run a read-only task on a model from another provider (Codex CLI, a Claude subagent, or any CLI you configure) and keep a record of what ran.

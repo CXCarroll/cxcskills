@@ -1,0 +1,3 @@
+interface:
+  display_name: "Model Delegates"
+  short_description: "Ask another provider's model, read-only"

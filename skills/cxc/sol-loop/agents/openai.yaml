@@ -1,0 +1,5 @@
+interface:
+  display_name: "Sol Loop"
+  short_description: "Review a change with Sol until you agree"
+policy:
+  allow_implicit_invocation: false
