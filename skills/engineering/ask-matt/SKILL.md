@@ -98,7 +98,12 @@ Off the main flow entirely.
 
 ## Additions in this fork (cxcskills)
 
-Five skills from `skills/cxc/`, each slotting into the map above.
+Seven skills from `skills/cxc/`, each slotting into the map above.
+
+**Greenfield with designed screens.** For a new app, or a feature with new screens, a design detour sits between the spec and the tickets: **`/grill-with-docs`** → **`/to-spec`** → `/clear` → **`/to-views`** → the boards in Claude Design → **`/adopt-design`** → **`/to-tickets`** → **`/implement`**. The boards then guide every UI ticket, unlike **`/prototype`**, whose code is thrown away once it answers its question.
+
+- **`/to-views`**: run in a fresh context after `/to-spec`. It reads only the spec and lists every view (route, who, purpose, data, actions, states), checks that every user story has a screen and every screen has a story, quizzes you on the list, then writes a design-system brief and one Claude Design brief per view.
+- **`/adopt-design`**: once the boards are right. It files them in the repo, extracts the tokens, writes the design README (precedence, view-to-board map, divergences from the spec, syncing), and adds the UI rules to `CODING_STANDARDS.md` for `/code-review`. Run it again whenever the canvas changes. Then **`/to-tickets`**, starting with a UI foundation ticket.
 
 - **`/sol-loop`**: a second opinion from another provider on the diff, after **`/code-review`** and before **`/pr`**. One reviewer (OpenAI's Sol through the Codex CLI), a budget of 3 rounds, and a standing order to keep the diff small.
 - **`/council`**: the heavier version: three models from three providers review the same change and score it out of 10, looping until they agree or the budget runs out. Reach for it on changes where a miss is expensive (auth, payments, data migrations).

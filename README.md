@@ -2,7 +2,7 @@
 
 An amalgamation of skills from other creators that I use frequently.
 
-cxcskills is my working set of agent skills for building and maintaining apps with Claude Code and Codex. The base is [Matt Pocock's skills](https://github.com/mattpocock/skills), which run my day-to-day workflow: interview the idea, write a spec, split it into tickets, build test-first, review. On top of that sit five skills drawn from Lauren Tan's [pstack](https://github.com/cursor/plugins/tree/main/pstack) and Theo Browne's [tstack](https://github.com/t3dotgg/tstack), adapted so they fit Matt's workflow instead of competing with it.
+cxcskills is my working set of agent skills for building and maintaining apps with Claude Code and Codex. The base is [Matt Pocock's skills](https://github.com/mattpocock/skills), which run my day-to-day workflow: interview the idea, write a spec, split it into tickets, build test-first, review. On top of that sit skills drawn from Lauren Tan's [pstack](https://github.com/cursor/plugins/tree/main/pstack) and Theo Browne's [tstack](https://github.com/t3dotgg/tstack), adapted so they fit Matt's workflow instead of competing with it, plus two of my own that take a new app from spec to designed screens.
 
 ## Credits
 
@@ -96,6 +96,9 @@ A user-invoked skill can call model-invoked ones, never another user-invoked one
 /grill-with-docs    sharpen the idea; build GLOSSARY.md and ADRs
    |  /prototype    when a question needs running code to answer
 /to-spec            turn the conversation into a spec
+/to-views           new screens: list the views, write a Claude Design brief for each
+   |                (in Claude Design: draw and tweak the boards)
+/adopt-design       the boards become the source of truth for how the app looks
 /to-tickets         split the spec into tracer-bullet tickets
 /implement          per ticket: tdd at agreed seams, then code-review
    |                typescript-best-practices applies while coding and in code-review
@@ -106,7 +109,7 @@ pr                  the PR body: summary, evidence, merge danger
 /retro              improve the agent's environment for next time
 ```
 
-Off the main path: `/diagnosing-bugs` for hard bugs, `/triage` for incoming issues, `/wayfinder` for work too big for one session, `/improve-codebase-architecture` for upkeep, and `/ask-matt` when you're not sure which skill fits. `/ask-matt` knows the five additions too.
+Off the main path: `/diagnosing-bugs` for hard bugs, `/triage` for incoming issues, `/wayfinder` for work too big for one session, `/improve-codebase-architecture` for upkeep, and `/ask-matt` when you're not sure which skill fits. `/ask-matt` knows the additions too.
 
 ### Cross-model review
 
@@ -133,6 +136,20 @@ A typical feature, start to finish:
 
 `/grill-with-docs`, `/to-spec` and `/to-tickets` share one session, so the spec and tickets build on the interview. Clear the context before each `/implement`, since every ticket stands on its own.
 
+A new app with designed screens adds a detour between the spec and the tickets:
+
+```text
+/grill-with-docs A portal where tenants report maintenance issues and track repairs.
+/to-spec
+/clear
+/to-views
+   (paste the briefs into Claude Design, then tweak the boards)
+/adopt-design https://claude.ai/artifact/<your canvas>
+/to-tickets
+```
+
+`/to-views` runs in a fresh context on purpose: it reads only the spec, so anything the interview settled but the spec left out shows up as a gap to fix before you design.
+
 | You want to | Type |
 | --- | --- |
 | Find the right skill for a situation | `/ask-matt` |
@@ -141,6 +158,8 @@ A typical feature, start to finish:
 | Get a second model's opinion on a diff | `/sol-loop` |
 | Have three providers review a risky change | `/council` |
 | Check what a small change might break | `/blast-radius` |
+| Plan the screens of a new app and brief Claude Design | `/to-views` |
+| Make finished boards the source of truth for the build | `/adopt-design` |
 | Tighten the types in a module | `/typescript-best-practices`, then say which module |
 | Improve the setup after a rough session | `/retro` |
 
@@ -197,13 +216,15 @@ General workflow tools, not code-specific.
 
 ### cxc (this fork)
 
-Adapted from pstack and tstack, plus `model-delegates`. See [`skills/cxc/README.md`](./skills/cxc/README.md) and the docs pages in [`docs/cxc/`](./docs/cxc/).
+Adapted from pstack and tstack, plus `model-delegates`, `to-views` and `adopt-design`, written for this fork. See [`skills/cxc/README.md`](./skills/cxc/README.md) and the docs pages in [`docs/cxc/`](./docs/cxc/).
 
 **User-invoked**
 
 - **[sol-loop](./skills/cxc/sol-loop/SKILL.md)**: Review the current change with OpenAI's Sol model in a short loop until you both agree. From tstack.
 - **[council](./skills/cxc/council/SKILL.md)**: Get a review or feedback from three models from different providers, and loop until they agree. From tstack.
 - **[blast-radius](./skills/cxc/blast-radius/SKILL.md)**: Find what a change could break outside its diff, and prove the one fact it is safe because of by running real code. From pstack.
+- **[to-views](./skills/cxc/to-views/SKILL.md)**: Turn a spec into a list of the app's views and one Claude Design brief per view, ready to prototype the screens.
+- **[adopt-design](./skills/cxc/adopt-design/SKILL.md)**: Make finished Claude Design boards the repo's source of truth for how the app looks, with tokens, a design README, and the coding standards that enforce them.
 
 **Model-invoked**
 

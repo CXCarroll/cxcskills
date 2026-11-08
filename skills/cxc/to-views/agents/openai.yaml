@@ -1,0 +1,5 @@
+interface:
+  display_name: "To Views"
+  short_description: "List the app's views and write design briefs"
+policy:
+  allow_implicit_invocation: false

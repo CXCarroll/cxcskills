@@ -1,0 +1,5 @@
+interface:
+  display_name: "Adopt Design"
+  short_description: "Make design boards the source of truth"
+policy:
+  allow_implicit_invocation: false

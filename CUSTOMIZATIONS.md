@@ -10,7 +10,7 @@ Pick one route. Both give you every skill, so installing both shows each skill t
 claude plugin uninstall mattpocock-skills@claude-plugins-official
 ```
 
-**Claude Code plugin** (the 32 promoted skills, namespaced as `/cxcskills:<name>`):
+**Claude Code plugin** (the 34 promoted skills, namespaced as `/cxcskills:<name>`):
 
 ```bash
 claude plugin marketplace add /path/to/cxcskills
@@ -40,7 +40,7 @@ It links every skill outside `deprecated/` and `misc/` into `~/.claude/skills` a
 
 These never conflict with upstream.
 
-- `skills/cxc/`: `typescript-best-practices`, `blast-radius`, `sol-loop`, `council`, `model-delegates`, and the bucket `README.md`.
+- `skills/cxc/`: `typescript-best-practices`, `blast-radius`, `sol-loop`, `council`, `model-delegates`, `to-views`, `adopt-design`, and the bucket `README.md`.
 - `docs/cxc/`: one docs page per cxc skill.
 - `.claude-plugin/icon.png`: the plugin icon `claude plugin validate` asks for.
 - `CUSTOMIZATIONS.md` (this file) and `THIRD_PARTY_NOTICES.md`.
@@ -53,7 +53,7 @@ Expect merge conflicts only here. Each change is small and sits at the top or bo
 | --- | --- | --- |
 | `.claude-plugin/plugin.json` | Name `cxcskills`, version `<upstream>-cxc.<n>`, description, author, keywords; no `homepage` or `repository`; the five cxc skill paths | Its own plugin identity, so it replaces `mattpocock-skills` instead of colliding with it |
 | `.claude-plugin/marketplace.json` | Marketplace and plugin renamed to `cxcskills`, owner, descriptions | Local install by path |
-| `README.md` | Fork notice at the top; `### cxc (this fork)` list at the bottom | Every promoted skill is listed and linked |
+| `README.md` | Rewritten as the fork's own README: credits, install, workflow, usage, and the full skill reference. On a conflict, keep ours and copy any new skill entries from Matt's README into its Skill reference | The fork's README describes the fork, and every promoted skill is listed and linked |
 | `CLAUDE.md` | `## This fork (cxcskills)` section at the bottom | `skills/cxc/` is a promoted bucket, with the same obligations as Matt's |
 | `skills/engineering/code-review/SKILL.md` | One paragraph in step 3: TypeScript diffs load `typescript-best-practices` as a standards source | Enforces the TypeScript rules at review, where Matt's flow imposes standards |
 | `skills/engineering/ask-matt/SKILL.md` | `## Additions in this fork (cxcskills)` section at the bottom | The router maps every user-reachable skill |
@@ -67,6 +67,7 @@ Expect merge conflicts only here. Each change is small and sits at the top or bo
 - **blast-radius** (pstack): its pointers to pstack's `why`, `arena` and `unslop` are replaced with `gh`/`git log`, `model-delegates`, and plain writing. Reads the domain glossary like Matt's skills do.
 - **sol-loop** (tstack): T3 Code's `delegate_task` is replaced by `model-delegates`, with a fresh delegate every round instead of resuming one. The PR line goes in the `pr` skill's Evidence section. User-invoked.
 - **council** (tstack): members come from `model-delegates` settings. Adds a review brief with a `SCORE:` line and a 3-round budget (the source loops until everyone is satisfied). The score table goes after the `pr` skill's sections. User-invoked.
+- **to-views** and **adopt-design**: new. They add a design detour for new screens between `to-spec` and `to-tickets`: list the views and brief Claude Design, then make the finished boards the source of truth with tokens, a design README and UI coding standards.
 - **model-delegates**: new. It owns the `delegate` script (Codex read-only runs, a configurable third CLI, a working-tree guard, timeouts, and a record per run), because this repo's convention lets one skill reach another only through the Skill tool.
 
 ## Pull Matt's updates
