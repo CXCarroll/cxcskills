@@ -57,6 +57,7 @@ Expect merge conflicts only here. Each change is small and sits at the top or bo
 | `CLAUDE.md` | `## This fork (cxcskills)` section at the bottom | `skills/cxc/` is a promoted bucket, with the same obligations as Matt's |
 | `skills/engineering/code-review/SKILL.md` | One paragraph in step 3: TypeScript diffs load `typescript-best-practices` as a standards source | Enforces the TypeScript rules at review, where Matt's flow imposes standards |
 | `skills/engineering/ask-matt/SKILL.md` | `## Additions in this fork (cxcskills)` section at the bottom | The router maps every user-reachable skill |
+| `.github/workflows/release.yml`, `needs-info.yml`, `triage-label.yml` | One `if: github.repository == 'mattpocock/skills'` line per job | Matt's release and issue-triage automation is skipped on this fork |
 
 `package.json` is untouched, so `npm run check-plugin-version` reports the `-cxc` suffix as a mismatch. That check only matters to Matt's release workflow.
 
@@ -77,4 +78,4 @@ git merge upstream/main
 
 Resolve conflicts in the files in the table above, keeping both sides. If Matt bumped his version, set `plugin.json` to his new version plus `-cxc.1`. Then run `claude plugin validate .`. Under Claude Code 2.1.319, `--strict` fails on Matt's repo too, because it flags the maintainer `CLAUDE.md` at the plugin root, so plain `validate` is the check that passes here.
 
-If you push this fork to GitHub, disable `.github/workflows/release.yml`, `triage-label.yml` and `needs-info.yml`. They are Matt's release and issue-triage automation.
+The fork lives at https://github.com/CXCarroll/cxcskills (`origin`), with Matt's repo as `upstream`.
