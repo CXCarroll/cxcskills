@@ -1,3 +1,7 @@
+# cxcskills
+
+An amalgamation of skills from other creators that I use frequently.
+
 > **cxcskills** is CXCarroll's fork of [mattpocock/skills](https://github.com/mattpocock/skills). It ships Matt's skills, plus five more in [`skills/cxc/`](./skills/cxc/README.md): `typescript-best-practices` and `blast-radius` adapted from Lauren Tan's [pstack](https://github.com/cursor/plugins/tree/main/pstack), `sol-loop` and `council` adapted from Theo Browne's [tstack](https://github.com/t3dotgg/tstack), and `model-delegates`, which runs other providers' models for them. [CUSTOMIZATIONS.md](./CUSTOMIZATIONS.md) lists every change to Matt's files and how to pull his updates.
 >
 > The installation steps below are Matt's and install his plugin, not this fork. Install this fork with one of the two routes in [CUSTOMIZATIONS.md](./CUSTOMIZATIONS.md#install), and uninstall `mattpocock-skills` first, or every skill shows up twice.
