@@ -2,225 +2,155 @@
 
 An amalgamation of skills from other creators that I use frequently.
 
-> **cxcskills** is CXCarroll's fork of [mattpocock/skills](https://github.com/mattpocock/skills). It ships Matt's skills, plus five more in [`skills/cxc/`](./skills/cxc/README.md): `typescript-best-practices` and `blast-radius` adapted from Lauren Tan's [pstack](https://github.com/cursor/plugins/tree/main/pstack), `sol-loop` and `council` adapted from Theo Browne's [tstack](https://github.com/t3dotgg/tstack), and `model-delegates`, which runs other providers' models for them. [CUSTOMIZATIONS.md](./CUSTOMIZATIONS.md) lists every change to Matt's files and how to pull his updates.
->
-> The installation steps below are Matt's and install his plugin, not this fork. Install this fork with one of the two routes in [CUSTOMIZATIONS.md](./CUSTOMIZATIONS.md#install), and uninstall `mattpocock-skills` first, or every skill shows up twice.
+cxcskills is my working set of agent skills for building and maintaining apps with Claude Code and Codex. The base is [Matt Pocock's skills](https://github.com/mattpocock/skills), which run my day-to-day workflow: interview the idea, write a spec, split it into tickets, build test-first, review. On top of that sit five skills drawn from Lauren Tan's [pstack](https://github.com/cursor/plugins/tree/main/pstack) and Theo Browne's [tstack](https://github.com/t3dotgg/tstack), adapted so they fit Matt's workflow instead of competing with it.
 
-<p>
-  <a href="https://www.aihero.dev/s/skills-newsletter">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://res.cloudinary.com/total-typescript/image/upload/v1777382277/skills-repo-dark_2x.png">
-      <source media="(prefers-color-scheme: light)" srcset="https://res.cloudinary.com/total-typescript/image/upload/v1777382277/skill-repo-light_2x.png">
-      <img alt="Skills" src="https://res.cloudinary.com/total-typescript/image/upload/v1777382277/skill-repo-light_2x.png" width="369">
-    </picture>
-  </a>
-</p>
+## Credits
 
-# Skills For Real Engineers
+The skills here are other people's work, adapted. Any rough edges in the adaptations are mine, not theirs.
 
-[![skills.sh](https://skills.sh/b/mattpocock/skills)](https://skills.sh/mattpocock/skills)
+| Creator | Source | Used here | Licence |
+| --- | --- | --- | --- |
+| **Matt Pocock** ([AI Hero](https://www.aihero.dev)) | [mattpocock/skills](https://github.com/mattpocock/skills) | The whole base: every engineering and productivity skill, the workflow that ties them together, and the repo's conventions | MIT |
+| **Lauren Tan** ([poteto](https://x.com/poteto)) | [pstack](https://github.com/cursor/plugins/tree/main/pstack) | `typescript-best-practices` (with her type-system and boundary discipline principles folded in) and `blast-radius` | MIT |
+| **Theo Browne** ([t3dotgg](https://github.com/t3dotgg)) | [tstack](https://github.com/t3dotgg/tstack) | `sol-loop`, `council`, and the delegation pattern behind `model-delegates` | MIT |
 
-My agent skills that I use every day to do real engineering - not vibe coding.
+Each adapted skill names its source in its `SKILL.md` under `metadata.credits`. The licences are in [LICENSE](./LICENSE) and [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md). The originals are maintained by their authors and move faster than this fork: Matt's [newsletter](https://www.aihero.dev/s/skills-newsletter) announces changes to his skills, and pstack and tstack are worth watching on GitHub.
 
-Developing real applications is hard. Approaches like GSD, BMAD, and Spec-Kit try to help by owning the process. But while doing so, they take away your control and make bugs in the process hard to resolve.
+### What each source brings
 
-These skills are designed to be small, easy to adapt, and composable. They work with any model. They're based on decades of engineering experience. Hack around with them. Make them your own. Enjoy.
+- **Matt Pocock** built his skills around four failure modes he kept seeing in coding agents. The agent builds the wrong thing, so start with a **grilling** session that aligns you before any code. The agent is verbose and inconsistent, so build a shared **glossary** of the project's terms. The code doesn't work, so give the agent tight feedback loops and **red-green-refactor** TDD. The codebase turns into a ball of mud, so design **deep modules**: a lot of behaviour behind a small interface. His skills are small, composable, and meant to be adapted, which is what made this fork easy.
+- **Lauren Tan** wrote pstack so agents write less code of higher quality: go deep first, verify against the real thing rather than a proxy, and let the type system reject bad states. This fork takes her TypeScript rules and her blast-radius check.
+- **Theo Browne** wrote tstack around getting a change proven, reviewed and landed. This fork takes his two cross-model review loops, which have models from other providers check the agent's work.
 
-If you want to keep up with changes to these skills, and any new ones I create, you can join ~60,000 other devs on my newsletter:
+## Install
 
-[Sign Up To The Newsletter](https://www.aihero.dev/s/skills-newsletter)
+You need Claude Code or Codex. `sol-loop` and `council` also need the [Codex CLI](https://developers.openai.com/codex) signed in with ChatGPT, and the PR steps use the GitHub CLI (`gh`).
 
-## Installation (30-second setup)
-
-A plugin updates itself. [skills.sh](https://skills.sh/mattpocock/skills) copies editable files into your project, and you update them by hand. Pick one per agent, because installing both gives you every skill twice.
-
-### 1. Get the skills
-
-<details>
-<summary><strong>Claude Code</strong></summary>
+Pick **one** route. If Matt's plugin is installed, remove it first, or every skill shows up twice:
 
 ```bash
-claude plugin install mattpocock-skills@claude-plugins-official
+claude plugin uninstall mattpocock-skills@claude-plugins-official
 ```
 
-Updates itself by default.
-
-</details>
-
-<details>
-<summary><strong>Codex</strong></summary>
+### Claude Code plugin
 
 ```bash
-codex plugin marketplace add mattpocock/skills
-codex plugin add mattpocock-skills@mattpocock
+claude plugin marketplace add CXCarroll/cxcskills
+claude plugin install cxcskills@cxcskills
 ```
 
-Updates itself at startup.
+Restart Claude Code. Skills appear as `/cxcskills:<name>`, for example `/cxcskills:grill-with-docs`. To install from a local clone instead of GitHub, pass its path to `marketplace add`.
 
-</details>
-
-<details>
-<summary><strong>GitHub Copilot</strong> (CLI and VS Code)</summary>
+Installed plugins are cached by version. To pick up a change, bump the `-cxc.<n>` suffix of `version` in `.claude-plugin/plugin.json`, push, then run:
 
 ```bash
-copilot plugin marketplace add mattpocock/skills
-copilot plugin install mattpocock-skills@mattpocock
+claude plugin marketplace update cxcskills
+claude plugin update cxcskills@cxcskills
 ```
 
-Then, once, add to `~/.copilot/settings.json`:
-
-```json
-{
-  "extraKnownMarketplaces": {
-    "mattpocock": { "source": { "source": "github", "repo": "mattpocock/skills" }, "autoUpdate": true }
-  }
-}
-```
-
-In VS Code, run **Chat: Install Plugin From Source** and enter `https://github.com/mattpocock/skills`. It updates daily.
-
-</details>
-
-<details>
-<summary><strong>Gemini CLI</strong> (manual updates)</summary>
+### Symlinks (Claude Code and Codex)
 
 ```bash
-gemini skills install https://github.com/mattpocock/skills.git --path skills/engineering
-gemini skills install https://github.com/mattpocock/skills.git --path skills/productivity
+git clone https://github.com/CXCarroll/cxcskills.git
+cd cxcskills
+scripts/link-skills.sh
 ```
 
-Re-run both commands to update.
+This links every skill into `~/.claude/skills` (Claude Code) and `~/.agents/skills` (Codex), so edits and `git pull` take effect at once, with no version bumps. It also links Matt's beta skills from `skills/in-progress/`. Re-run it after adding or renaming a skill.
 
-</details>
+### Set up each project
 
-<details>
-<summary><strong>Any other agent, or editable files</strong> (manual updates)</summary>
+Run `/setup-matt-pocock-skills` once in each repo (`/cxcskills:setup-matt-pocock-skills` with the plugin). It records your issue tracker (GitHub Issues, local markdown files, or another), your triage labels, and where the domain docs live.
 
-```bash
-npx skills@latest add mattpocock/skills -a <agent>  # cursor, opencode, devin, windsurf, amp, pi; omit -a to choose
+### Settings for sol-loop and council
+
+`sol-loop` and `council` read which models to use from a `## Model delegates` section that you add to a `CLAUDE.md` or `AGENTS.md`: your global one to cover every project, or one repo's to cover just that repo.
+
+```markdown
+## Model delegates
+
+| Member | Route | Model | Effort |
+| --- | --- | --- | --- |
+| Claude Opus | subagent | opus | high |
+| GPT Sol | codex | default | high |
+| <third member> | cmd: `<CLI call that reads the prompt on stdin>` | set in the command | |
+
+- Sol reviewer: GPT Sol
+- Council: Claude Opus, GPT Sol, <third member>
 ```
 
-When the installer asks which skills to take, include `setup-matt-pocock-skills`. To update, run `npx skills@latest update`, and re-run `add` to pick up new skills.
+`default` uses whatever model your Codex CLI is configured with. The third member can be any command-line tool that reads a prompt on stdin, prints its reply, and runs in its own read-only mode. Until one is set, `/council` says so and stops, unless you name the members yourself ("council with Claude and GPT").
 
-</details>
+## How the skills work
 
-### 2. Run `/setup-matt-pocock-skills`
+A skill is a folder with a `SKILL.md`: a one-line description the agent always sees, and instructions it loads only when the skill runs. There are two kinds:
 
-In your agent, run it once per repo. It will:
+- **User-invoked** skills run only when you type them, like `/grill-with-docs` or `/sol-loop`. Each one orchestrates a whole step of work.
+- **Model-invoked** skills can be typed too, but the agent also reaches for them on its own when a task fits, like `tdd` while building or `typescript-best-practices` while writing TypeScript. They hold reusable discipline.
 
-- Ask you which issue tracker you want to use (GitHub, GitLab, local files, or anything else you describe)
-- Ask you what labels you apply to tickets when you triage them (`/triage` uses labels)
-- Ask you where you want to save any docs we create
+A user-invoked skill can call model-invoked ones, never another user-invoked one.
 
-### 3. Bam - you're ready to go.
+### The workflow
 
-## Why These Skills Exist
+```text
+/grill-with-docs    sharpen the idea; build GLOSSARY.md and ADRs
+   |  /prototype    when a question needs running code to answer
+/to-spec            turn the conversation into a spec
+/to-tickets         split the spec into tracer-bullet tickets
+/implement          per ticket: tdd at agreed seams, then code-review
+   |                typescript-best-practices applies while coding and in code-review
+/sol-loop           optional: a second model hunts bugs in the diff
+/council            or: three providers review and score it
+/blast-radius       optional: what could this break outside the diff?
+pr                  the PR body: summary, evidence, merge danger
+/retro              improve the agent's environment for next time
+```
 
-I built these skills as a way to fix common failure modes I see with Claude Code, Codex, and other coding agents.
+Off the main path: `/diagnosing-bugs` for hard bugs, `/triage` for incoming issues, `/wayfinder` for work too big for one session, `/improve-codebase-architecture` for upkeep, and `/ask-matt` when you're not sure which skill fits. `/ask-matt` knows the five additions too.
 
-### #1: The Agent Didn't Do What I Want
+### Cross-model review
 
-> "No-one knows exactly what they want"
->
-> David Thomas & Andrew Hunt, [The Pragmatic Programmer](https://www.amazon.co.uk/Pragmatic-Programmer-Anniversary-Journey-Mastery/dp/B0833F1T3V)
+`sol-loop`, `council` and `blast-radius` reach other providers' models through `model-delegates`. Every run:
 
-**The Problem**. The most common failure mode in software development is misalignment. You think the dev knows what you want. Then you see what they've built - and you realize it didn't understand you at all.
+- **is read-only.** Codex runs in its read-only sandbox, and a guard fingerprints your git working tree before and after, failing the run if anything changed.
+- **uses the model you configured.** If a member can't run, you get the blocker, never a substitute model.
+- **leaves a record**: the brief, the reply, the model as the provider reported it, and token usage, in a folder under `$TMPDIR/cxc-delegates`.
 
-This is just the same in the AI age. There is a communication gap between you and the agent. The fix for this is a **grilling session** - getting the agent to ask you detailed questions about what you're building.
+Reviews are budgeted. `sol-loop` stops after 3 rounds (5 for security, auth or data-loss findings), `council` after 3, and both push back on fixes that would grow the change.
 
-**The Fix** is to use:
+## Using them
 
-- [`/grill-me`](./skills/productivity/grill-me/SKILL.md) - for non-code uses
-- [`/grill-with-docs`](./skills/engineering/grill-with-docs/SKILL.md) - same as [`/grill-me`](./skills/productivity/grill-me/SKILL.md), but adds more goodies (see below)
+A typical feature, start to finish:
 
-These are my most popular skills. They help you align with the agent before you get started, and think deeply about the change you're making. Use them _every_ time you want to make a change.
+```text
+/grill-with-docs Tenants should be able to upload proof of insurance from their portal.
+/to-spec
+/to-tickets
+/clear
+/implement #42
+/sol-loop
+```
 
-### #2: The Agent Is Way Too Verbose
+`/grill-with-docs`, `/to-spec` and `/to-tickets` share one session, so the spec and tickets build on the interview. Clear the context before each `/implement`, since every ticket stands on its own.
 
-> With a ubiquitous language, conversations among developers and expressions of the code are all derived from the same domain model.
->
-> Eric Evans, [Domain-Driven-Design](https://www.amazon.co.uk/Domain-Driven-Design-Tackling-Complexity-Software/dp/0321125215)
+| You want to | Type |
+| --- | --- |
+| Find the right skill for a situation | `/ask-matt` |
+| Fix a bug that resists a first look | `/diagnosing-bugs` |
+| Review a branch against `main` | `/code-review main` |
+| Get a second model's opinion on a diff | `/sol-loop` |
+| Have three providers review a risky change | `/council` |
+| Check what a small change might break | `/blast-radius` |
+| Tighten the types in a module | `/typescript-best-practices`, then say which module |
+| Improve the setup after a rough session | `/retro` |
 
-**The Problem**: At the start of a project, devs and the people they're building the software for (the domain experts) are usually speaking different languages.
+With the plugin installed, add the `cxcskills:` prefix, for example `/cxcskills:sol-loop`.
 
-I felt the same tension with my agents. Agents are usually dropped into a project and asked to figure out the jargon as they go. So they use 20 words where 1 will do.
+## Skill reference
 
-**The Fix** for this is a shared language. It's a document that helps agents decode the jargon used in the project.
+### Engineering (Matt Pocock)
 
-<details>
-<summary>
-Example
-</summary>
-
-Here's an example [glossary](https://github.com/mattpocock/course-video-manager/blob/076a5a7a182db0fe1e62971dd7a68bcadf010f1c/CONTEXT.md) (still named `CONTEXT.md` at that pinned commit, from before the skills renamed the convention), from my `course-video-manager` repo. Which one is easier to read?
-
-- **BEFORE**: "There's a problem when a lesson inside a section of a course is made 'real' (i.e. given a spot in the file system)"
-- **AFTER**: "There's a problem with the materialization cascade"
-
-This concision pays off session after session.
-
-</details>
-
-This is built into [`/grill-with-docs`](./skills/engineering/grill-with-docs/SKILL.md). It's a grilling session, but that helps you build a shared language with the AI, and document hard-to-explain decisions in ADR's.
-
-It's hard to explain how powerful this is. It might be the single coolest technique in this repo. Try it, and see.
-
-> [!TIP]
-> A shared language has many other benefits than reducing verbosity:
->
-> - **Variables, functions and files are named consistently**, using the shared language
-> - As a result, the **codebase is easier to navigate** for the agent
-> - The agent also **spends fewer tokens on thinking**, because it has access to a more concise language
-
-### #3: The Code Doesn't Work
-
-> "Always take small, deliberate steps. The rate of feedback is your speed limit. Never take on a task that’s too big."
->
-> David Thomas & Andrew Hunt, [The Pragmatic Programmer](https://www.amazon.co.uk/Pragmatic-Programmer-Anniversary-Journey-Mastery/dp/B0833F1T3V)
-
-**The Problem**: Let's say that you and the agent are aligned on what to build. What happens when the agent _still_ produces crap?
-
-It's time to look at your feedback loops. Without feedback on how the code it produces actually runs, the agent will be flying blind.
-
-**The Fix**: You need the usual tranche of feedback loops: static types, browser access, and automated tests.
-
-For automated tests, a red-green-refactor loop is critical. This is where the agent writes a failing test first, then fixes the test. This helps give the agent a consistent level of feedback that results in far better code.
-
-I've built a **[`/tdd`](./skills/engineering/tdd/SKILL.md) skill** you can slot into any project. It encourages red-green-refactor and gives the agent plenty of guidance on what makes good and bad tests.
-
-For debugging, I've also built a **[`/diagnosing-bugs`](./skills/engineering/diagnosing-bugs/SKILL.md)** skill that wraps best debugging practices into a disciplined loop, gated phase by phase.
-
-### #4: We Built A Ball Of Mud
-
-> "Invest in the design of the system _every day_."
->
-> Kent Beck, [Extreme Programming Explained](https://www.amazon.co.uk/Extreme-Programming-Explained-Embrace-Change/dp/0321278658)
-
-> "The best modules are deep. They allow a lot of functionality to be accessed through a simple interface."
->
-> John Ousterhout, [A Philosophy Of Software Design](https://www.amazon.co.uk/Philosophy-Software-Design-2nd/dp/173210221X)
-
-**The Problem**: Most apps built with agents are complex and hard to change. Because agents can radically speed up coding, they also accelerate software entropy. Codebases get more complex at an unprecedented rate.
-
-**The Fix** for this is a radical new approach to AI-powered development: caring about the design of the code.
-
-This is built in to every layer of these skills:
-
-- [`/to-spec`](./skills/engineering/to-spec/SKILL.md) quizzes you about which modules you're touching before creating a spec
-
-And crucially, [`/improve-codebase-architecture`](./skills/engineering/improve-codebase-architecture/SKILL.md) surveys a codebase for deepening opportunities and hands you the candidates. I recommend running it on your codebase once every few days. It is a survey, not a rescue: on a genuinely old codebase it will find real candidates, but it won't untangle the mud for you.
-
-### Summary
-
-Software engineering fundamentals matter more than ever. These skills are my best effort at condensing these fundamentals into repeatable practices, to help you ship the best apps of your career. Enjoy.
-
-## Reference
-
-These split on one axis: who can invoke them. **User-invoked** skills are reachable only when you type them (e.g. `/grill-me`); their job is to orchestrate. **Model-invoked** skills can be invoked by you _or_ reached for automatically by the agent when the task fits; they hold the reusable discipline. A user-invoked skill may invoke model-invoked skills, but never another user-invoked one.
-
-### Engineering
-
-Skills I use daily for code work.
+Daily code work.
 
 **User-invoked**
 
@@ -248,7 +178,7 @@ Skills I use daily for code work.
 - **[pr](./skills/engineering/pr/SKILL.md)**: The shape a pull request body should take: a summary as the smallest visual that makes the change clear, before/after evidence that it works, and a merge-danger call (one-way or two-way door, plus blast radius).
 - **[wizard](./skills/engineering/wizard/SKILL.md)**: Generate an interactive bash wizard that walks a human through steps only they can perform: provisioning infrastructure, setting up credentials or CI secrets, walking an unfamiliar third-party dashboard, or running a one-off migration or cutover.
 
-### Productivity
+### Productivity (Matt Pocock)
 
 General workflow tools, not code-specific.
 
@@ -267,15 +197,47 @@ General workflow tools, not code-specific.
 
 ### cxc (this fork)
 
-Added in this fork, from [pstack](https://github.com/cursor/plugins/tree/main/pstack) and [tstack](https://github.com/t3dotgg/tstack). See [`skills/cxc/README.md`](./skills/cxc/README.md).
+Adapted from pstack and tstack, plus `model-delegates`. See [`skills/cxc/README.md`](./skills/cxc/README.md) and the docs pages in [`docs/cxc/`](./docs/cxc/).
 
 **User-invoked**
 
-- **[sol-loop](./skills/cxc/sol-loop/SKILL.md)**: Review the current change with OpenAI's Sol model in a short loop until you both agree.
-- **[council](./skills/cxc/council/SKILL.md)**: Get a review or feedback from three models from different providers, and loop until they agree.
-- **[blast-radius](./skills/cxc/blast-radius/SKILL.md)**: Find what a change could break outside its diff, and prove the one fact it is safe because of by running real code.
+- **[sol-loop](./skills/cxc/sol-loop/SKILL.md)**: Review the current change with OpenAI's Sol model in a short loop until you both agree. From tstack.
+- **[council](./skills/cxc/council/SKILL.md)**: Get a review or feedback from three models from different providers, and loop until they agree. From tstack.
+- **[blast-radius](./skills/cxc/blast-radius/SKILL.md)**: Find what a change could break outside its diff, and prove the one fact it is safe because of by running real code. From pstack.
 
 **Model-invoked**
 
-- **[typescript-best-practices](./skills/cxc/typescript-best-practices/SKILL.md)**: Type-design rules for TypeScript and Svelte: discriminated unions, branded IDs from a verifying parse, parsing at boundaries, no `as` or `!`, exhaustive switches. `code-review` loads it for TypeScript diffs.
+- **[typescript-best-practices](./skills/cxc/typescript-best-practices/SKILL.md)**: Type-design rules for TypeScript and Svelte: discriminated unions, branded IDs from a verifying parse, parsing at boundaries, no `as` or `!`, exhaustive switches. `code-review` loads it for TypeScript diffs. From pstack.
 - **[model-delegates](./skills/cxc/model-delegates/SKILL.md)**: Run a read-only task on a model from another provider (Codex CLI, a Claude subagent, or any CLI you configure) and keep a record of what ran.
+
+## What was left out
+
+Other skills from the same sources were considered and skipped, because they repeat or conflict with Matt's workflow:
+
+- From pstack: `tdd` (meant only for bug fixes on request, where Matt's `tdd` is test-first for everything), `poteto-mode` (a competing workflow router), and `architect`, `correct` and `interrogate` (covered by `codebase-design`, `retro` and `code-review`).
+- From tstack: `full-send`, `full-stop`, `babysit-pr` and `file-pr` (they overlap with the PR flow and the `pr` skill), plus `takeover`, `modernize` and `leaving-pr-comments`, which may come later.
+- Kun Chen's [First Mate](https://github.com/kunchenguid/firstmate), an agent distro for running a crew of agents rather than a set of skills to mix in.
+
+## Staying current with Matt's skills
+
+This repo keeps Matt's repository as the `upstream` remote:
+
+```bash
+git fetch upstream
+git merge upstream/main
+```
+
+[CUSTOMIZATIONS.md](./CUSTOMIZATIONS.md) lists every change made to Matt's files, which is where any merge conflicts will be, and how to resolve them.
+
+## Repository layout
+
+- `skills/engineering/`, `skills/productivity/`: Matt's skills, shipped in the plugin.
+- `skills/cxc/`: this fork's additions, shipped in the plugin.
+- `skills/in-progress/`, `skills/misc/`: Matt's beta and rarely used skills, not in the plugin.
+- `docs/`: a human-facing page per skill.
+- `CUSTOMIZATIONS.md`: what differs from upstream, and how to merge.
+- `THIRD_PARTY_NOTICES.md`: the pstack and tstack licences.
+
+## License
+
+MIT. Matt Pocock's licence is in [LICENSE](./LICENSE); the pstack and tstack licences are in [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).
