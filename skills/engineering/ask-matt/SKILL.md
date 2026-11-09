@@ -98,7 +98,7 @@ Off the main flow entirely.
 
 ## Additions in this fork (cxcskills)
 
-Seven skills from `skills/cxc/`, each slotting into the map above.
+Eight skills from `skills/cxc/`, each slotting into the map above.
 
 **Greenfield with designed screens.** For a new app, or a feature with new screens, a design detour sits between the spec and the tickets: **`/grill-with-docs`** → **`/to-spec`** → `/clear` → **`/to-views`** → the boards in Claude Design → **`/adopt-design`** → **`/to-tickets`** → **`/implement`**. The boards then guide every UI ticket, unlike **`/prototype`**, whose code is thrown away once it answers its question.
 
@@ -109,4 +109,5 @@ Seven skills from `skills/cxc/`, each slotting into the map above.
 - **`/council`**: the heavier version: three models from three providers review the same change and score it out of 10, looping until they agree or the budget runs out. Reach for it on changes where a miss is expensive (auth, payments, data migrations).
 - **`/blast-radius`**: before merging a small diff you don't trust. `/code-review` asks whether the diff is built right; blast radius asks what it breaks *outside* the diff, and proves the one fact it is safe because of by running code.
 - **`/typescript-best-practices`**: vocabulary underneath, beside `/codebase-design`. Model-invoked while writing TypeScript or Svelte, and `/code-review` loads it for any TypeScript diff.
+- **`/ui-hill-climb`**: upkeep for the look of a working app. Each round captures the same screenshots, has judges from different providers score them per design category against reference apps, and fixes what they agree on, until every judge reaches the target. Reach for `/council` instead for a one-off review of a change.
 - **`/model-delegates`**: the machinery `/sol-loop`, `/council` and `/blast-radius` use to reach other providers' models, read-only. Its settings (which models, which CLI for the third provider) live in a `## Model delegates` section of `CLAUDE.md` or `AGENTS.md`.

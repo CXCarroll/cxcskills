@@ -8,7 +8,7 @@
     {
       "name": "cxcskills",
       "source": "./",
-      "description": "Matt Pocock's agent skills plus TypeScript best practices, blast radius, cross-model review, and a spec-to-designed-screens flow.",
+      "description": "Matt Pocock's agent skills plus TypeScript best practices, blast radius, cross-model review, a spec-to-designed-screens flow, and a UI hill climb.",
       "category": "engineering",
       "keywords": [
         "engineering",

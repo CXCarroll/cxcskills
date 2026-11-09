@@ -10,7 +10,7 @@ Pick one route. Both give you every skill, so installing both shows each skill t
 claude plugin uninstall mattpocock-skills@claude-plugins-official
 ```
 
-**Claude Code plugin** (the 34 promoted skills, namespaced as `/cxcskills:<name>`):
+**Claude Code plugin** (the 35 promoted skills, namespaced as `/cxcskills:<name>`):
 
 ```bash
 claude plugin marketplace add /path/to/cxcskills
@@ -40,7 +40,7 @@ It links every skill outside `deprecated/` and `misc/` into `~/.claude/skills` a
 
 These never conflict with upstream.
 
-- `skills/cxc/`: `typescript-best-practices`, `blast-radius`, `sol-loop`, `council`, `model-delegates`, `to-views`, `adopt-design`, and the bucket `README.md`.
+- `skills/cxc/`: `typescript-best-practices`, `blast-radius`, `sol-loop`, `council`, `model-delegates`, `to-views`, `adopt-design`, `ui-hill-climb`, and the bucket `README.md`.
 - `docs/cxc/`: one docs page per cxc skill.
 - `.claude-plugin/icon.png`: the plugin icon `claude plugin validate` asks for.
 - `CUSTOMIZATIONS.md` (this file) and `THIRD_PARTY_NOTICES.md`.
@@ -68,7 +68,8 @@ Expect merge conflicts only here. Each change is small and sits at the top or bo
 - **sol-loop** (tstack): T3 Code's `delegate_task` is replaced by `model-delegates`, with a fresh delegate every round instead of resuming one. The PR line goes in the `pr` skill's Evidence section. User-invoked.
 - **council** (tstack): members come from `model-delegates` settings. Adds a review brief with a `SCORE:` line and a 3-round budget (the source loops until everyone is satisfied). The score table goes after the `pr` skill's sections. User-invoked.
 - **to-views** and **adopt-design**: new. They add a design detour for new screens between `to-spec` and `to-tickets`: list the views and brief Claude Design, then make the finished boards the source of truth with tokens, a design README and UI coding standards.
-- **model-delegates**: new. It owns the `delegate` script (Codex read-only runs, a configurable third CLI, a working-tree guard, timeouts, and a record per run), because this repo's convention lets one skill reach another only through the Skill tool.
+- **ui-hill-climb**: new, following the technique Theo Browne showed in "Agents Sucked At UI (Until Today)": judges from several providers score repeatable screenshots per category against reference apps, gated so the cheapest judge goes first, until all of them reach a target.
+- **model-delegates**: new. It owns the `delegate` script (Codex read-only runs with attached images, a configurable third CLI, a working-tree guard, timeouts, and a record per run), because this repo's convention lets one skill reach another only through the Skill tool.
 
 ## Pull Matt's updates
 

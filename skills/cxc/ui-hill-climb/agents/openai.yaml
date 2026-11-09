@@ -1,0 +1,5 @@
+interface:
+  display_name: "UI Hill Climb"
+  short_description: "Climb UI scores against reference apps"
+policy:
+  allow_implicit_invocation: false

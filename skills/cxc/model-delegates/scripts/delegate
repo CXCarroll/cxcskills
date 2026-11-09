@@ -2,9 +2,9 @@
 # delegate: run one read-only task on a model from another provider, and keep a record of it.
 #
 #   delegate run --provider codex [--model SLUG] [--effort LEVEL] --brief FILE
-#                [--repo DIR] [--label NAME] [--timeout SECONDS]
+#                [--image FILE]... [--repo DIR] [--label NAME] [--timeout SECONDS]
 #   delegate run --provider cmd --command 'CLI ARGS' --brief FILE
-#                [--repo DIR] [--label NAME] [--timeout SECONDS]
+#                [--image FILE]... [--repo DIR] [--label NAME] [--timeout SECONDS]
 #   delegate fingerprint [--repo DIR]
 #   delegate --help
 #
@@ -16,9 +16,11 @@
 #   codex  Runs `codex exec --sandbox read-only --skip-git-repo-check --json -o <reply>`
 #          with the brief as the prompt. --model adds `--model SLUG`. Without it Codex uses
 #          the model from its own config, which meta.txt records when config.toml names one.
-#          --effort adds `-c model_reasoning_effort=LEVEL`.
+#          --effort adds `-c model_reasoning_effort=LEVEL`. Each --image adds `--image FILE`,
+#          which attaches the picture to the prompt so the model actually sees it.
 #   cmd    Runs COMMAND with bash. The brief arrives on stdin and its path is in
-#          $CXC_BRIEF_FILE. Stdout is the reply. COMMAND must be read-only on its own:
+#          $CXC_BRIEF_FILE. Any --image paths are in $CXC_IMAGES, one per line, for the
+#          command to attach in whatever way its CLI takes images. Stdout is the reply. COMMAND must be read-only on its own:
 #          the guard below is the only check this script can make.
 #
 #   The guard fingerprints DIR's git working tree (HEAD, status, diffs, untracked file
@@ -105,6 +107,10 @@ provider_codex() {
   if [ -n "$effort" ]; then
     args+=(-c "model_reasoning_effort=$effort")
   fi
+  local img
+  for img in ${images[@]+"${images[@]}"}; do
+    args+=(--image "$img")
+  done
   printf '%q ' codex "${args[@]}" >"$run/command.txt"
   # shellcheck disable=SC2016
   echo '"$(cat brief.md)"' >>"$run/command.txt"
@@ -115,7 +121,7 @@ provider_codex() {
 provider_cmd() {
   printf '%s\n' "$command" >"$run/command.txt"
   # shellcheck disable=SC2094
-  (cd "$repo" && CXC_BRIEF_FILE="$run/brief.md" exec bash -c "$command") \
+  (cd "$repo" && CXC_BRIEF_FILE="$run/brief.md" CXC_IMAGES="$(printf '%s\n' ${images[@]+"${images[@]}"})" exec bash -c "$command") \
     <"$run/brief.md" >"$run/reply.md" 2>"$run/stderr.log"
 }
 
@@ -133,8 +139,15 @@ cmd_fingerprint() {
 
 cmd_run() {
   provider="" model="" effort="" brief="" repo="." label="delegate" timeout=1800 command=""
+  images=()
   while [ $# -gt 0 ]; do
     case $1 in
+      --image)
+        [ $# -ge 2 ] || die "--image needs a value"
+        [ -f "$2" ] || die "no such image file: $2"
+        images+=("$(cd "$(dirname "$2")" && pwd)/$(basename "$2")")
+        shift 2
+        ;;
       --provider|--model|--effort|--brief|--repo|--label|--timeout|--command)
         [ $# -ge 2 ] || die "$1 needs a value"
         case $1 in
@@ -226,6 +239,7 @@ cmd_run() {
     echo "provider: $provider"
     echo "model: ${model_note:-unknown}"
     echo "effort: ${effort:-not set}"
+    echo "images: ${#images[@]}"
     echo "label: $label"
     echo "repo: $repo"
     echo "started: $started"

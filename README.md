@@ -2,7 +2,7 @@
 
 An amalgamation of skills from other creators that I use frequently.
 
-cxcskills is my working set of agent skills for building and maintaining apps with Claude Code and Codex. The base is [Matt Pocock's skills](https://github.com/mattpocock/skills), which run my day-to-day workflow: interview the idea, write a spec, split it into tickets, build test-first, review. On top of that sit skills drawn from Lauren Tan's [pstack](https://github.com/cursor/plugins/tree/main/pstack) and Theo Browne's [tstack](https://github.com/t3dotgg/tstack), adapted so they fit Matt's workflow instead of competing with it, plus two of my own that take a new app from spec to designed screens.
+cxcskills is my working set of agent skills for building and maintaining apps with Claude Code and Codex. The base is [Matt Pocock's skills](https://github.com/mattpocock/skills), which run my day-to-day workflow: interview the idea, write a spec, split it into tickets, build test-first, review. On top of that sit skills drawn from Lauren Tan's [pstack](https://github.com/cursor/plugins/tree/main/pstack) and Theo Browne's [tstack](https://github.com/t3dotgg/tstack), adapted so they fit Matt's workflow instead of competing with it, plus a few of my own: two that take a new app from spec to designed screens, and a UI hill climb.
 
 ## Credits
 
@@ -160,6 +160,7 @@ A new app with designed screens adds a detour between the spec and the tickets:
 | Check what a small change might break | `/blast-radius` |
 | Plan the screens of a new app and brief Claude Design | `/to-views` |
 | Make finished boards the source of truth for the build | `/adopt-design` |
+| Push a working app's UI quality up against reference apps | `/ui-hill-climb` |
 | Tighten the types in a module | `/typescript-best-practices`, then say which module |
 | Improve the setup after a rough session | `/retro` |
 
@@ -216,7 +217,7 @@ General workflow tools, not code-specific.
 
 ### cxc (this fork)
 
-Adapted from pstack and tstack, plus `model-delegates`, `to-views` and `adopt-design`, written for this fork. See [`skills/cxc/README.md`](./skills/cxc/README.md) and the docs pages in [`docs/cxc/`](./docs/cxc/).
+Adapted from pstack and tstack, plus `model-delegates`, `to-views`, `adopt-design` and `ui-hill-climb`, written for this fork. See [`skills/cxc/README.md`](./skills/cxc/README.md) and the docs pages in [`docs/cxc/`](./docs/cxc/).
 
 **User-invoked**
 
@@ -225,6 +226,7 @@ Adapted from pstack and tstack, plus `model-delegates`, `to-views` and `adopt-de
 - **[blast-radius](./skills/cxc/blast-radius/SKILL.md)**: Find what a change could break outside its diff, and prove the one fact it is safe because of by running real code. From pstack.
 - **[to-views](./skills/cxc/to-views/SKILL.md)**: Turn a spec into a list of the app's views and one Claude Design brief per view, ready to prototype the screens.
 - **[adopt-design](./skills/cxc/adopt-design/SKILL.md)**: Make finished Claude Design boards the repo's source of truth for how the app looks, with tokens, a design README, and the coding standards that enforce them.
+- **[ui-hill-climb](./skills/cxc/ui-hill-climb/SKILL.md)**: Raise the app's UI quality round by round until models from different providers score every design category at a target, judged against reference apps. The technique is Theo Browne's.
 
 **Model-invoked**
 

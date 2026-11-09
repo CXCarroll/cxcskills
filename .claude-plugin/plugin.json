@@ -1,7 +1,7 @@
 {
   "name": "cxcskills",
-  "version": "1.3.2-cxc.2",
-  "description": "CXCarroll's fork of Matt Pocock's skills: the full engineering and productivity set, plus TypeScript best practices, blast radius, cross-model review (sol-loop, council, model delegates), and a spec-to-designed-screens flow (to-views, adopt-design).",
+  "version": "1.3.2-cxc.3",
+  "description": "CXCarroll's fork of Matt Pocock's skills: the full engineering and productivity set, plus TypeScript best practices, blast radius, cross-model review (sol-loop, council, model delegates), a spec-to-designed-screens flow (to-views, adopt-design), and a UI hill climb.",
   "author": {
     "name": "CXCarroll"
   },
@@ -51,6 +51,7 @@
     "./skills/cxc/council",
     "./skills/cxc/model-delegates",
     "./skills/cxc/to-views",
-    "./skills/cxc/adopt-design"
+    "./skills/cxc/adopt-design",
+    "./skills/cxc/ui-hill-climb"
   ]
 }

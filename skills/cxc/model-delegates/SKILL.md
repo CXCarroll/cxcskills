@@ -60,6 +60,8 @@ Never substitute. If a member cannot run (CLI missing, not signed in, unknown mo
 
    For `subagent`, run `delegate fingerprint --repo <repo root>` first, then start one Agent with a fresh context window (never a fork of this conversation), the table's model and effort, and the brief as its prompt. When it returns, run `delegate fingerprint` again. A different fingerprint means the subagent broke read-only.
 
+   **Screenshots and other images:** add `--image <file>` once per picture. The `codex` route attaches each one to the prompt, the only reliable way Codex sees an image. A `cmd` member gets the paths in `$CXC_IMAGES`, one per line, for its command to attach. For a `subagent`, list the absolute paths in the brief and tell it to read each image.
+
 3. **Several members at once:** start every member in the same turn, then wait for all of them. Edit nothing in the repo until every delegate has returned: the guard fingerprints the whole working tree, so your own edit would fail the run.
 
 4. **Read the result.** The script prints `run:`, `reply:` and `meta:` paths.
