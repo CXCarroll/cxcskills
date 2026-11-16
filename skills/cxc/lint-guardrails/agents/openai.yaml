@@ -1,0 +1,3 @@
+interface:
+  display_name: "Lint Guardrails"
+  short_description: "Lint rules whose errors name the fix, ratcheted"
