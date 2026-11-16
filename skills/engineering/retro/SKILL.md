@@ -24,6 +24,8 @@ The user has asked for a **retrospective**. You are suggesting improvements to t
 
 4. Present these candidates to the user, in order of severity.
 
+   When a candidate is a mechanical mistake that has now happened twice, tell the user that `/correct <the mistake>` builds the check and proves it fails on the real mistake.
+
 ## Reference
 
 ### Implementation vs Review
