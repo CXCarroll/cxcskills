@@ -57,6 +57,8 @@ A rule a linter can check belongs in the linter, not in a reviewer's head. When 
 
 Both assertion rules still allow `as const`. In an existing codebase full of casts, turn the rule on for new and changed files first, or fail only when a change adds more.
 
+For a ban of your own (a Svelte rune, a browser API, an import), with an error that names the fix and a ratchet for existing code, call the Skill tool with "lint-guardrails".
+
 ## In review
 
 When `code-review` loads this skill, each rule above is a documented standard for the Standards axis. A repo's own `CODING_STANDARDS.md` overrides a rule here where the two disagree, and anything the repo's linter already enforces is skipped.
