@@ -11,7 +11,7 @@ The skills here are other people's work, adapted. Any rough edges in the adaptat
 | Creator | Source | Used here | Licence |
 | --- | --- | --- | --- |
 | **Matt Pocock** ([AI Hero](https://www.aihero.dev)) | [mattpocock/skills](https://github.com/mattpocock/skills) | The whole base: every engineering and productivity skill, the workflow that ties them together, and the repo's conventions | MIT |
-| **Lauren Tan** ([poteto](https://x.com/poteto)) | [pstack](https://github.com/cursor/plugins/tree/main/pstack) | `typescript-best-practices` (with her type-system and boundary discipline principles folded in) and `blast-radius` | MIT |
+| **Lauren Tan** ([poteto](https://x.com/poteto)) | [pstack](https://github.com/cursor/plugins/tree/main/pstack) | `typescript-best-practices` (with her type-system and boundary discipline principles folded in), `blast-radius`, `correct`, `create-verification-skill` and `maintain-verification-skill`, and the lint rules in `lint-guardrails` | MIT |
 | **Theo Browne** ([t3dotgg](https://github.com/t3dotgg)) | [tstack](https://github.com/t3dotgg/tstack) | `sol-loop`, `council`, and the delegation pattern behind `model-delegates` | MIT |
 
 Each adapted skill names its source in its `SKILL.md` under `metadata.credits`. The licences are in [LICENSE](./LICENSE) and [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md). The originals are maintained by their authors and move faster than this fork: Matt's [newsletter](https://www.aihero.dev/s/skills-newsletter) announces changes to his skills, and pstack and tstack are worth watching on GitHub.
@@ -19,7 +19,7 @@ Each adapted skill names its source in its `SKILL.md` under `metadata.credits`. 
 ### What each source brings
 
 - **Matt Pocock** built his skills around four failure modes he kept seeing in coding agents. The agent builds the wrong thing, so start with a **grilling** session that aligns you before any code. The agent is verbose and inconsistent, so build a shared **glossary** of the project's terms. The code doesn't work, so give the agent tight feedback loops and **red-green-refactor** TDD. The codebase turns into a ball of mud, so design **deep modules**: a lot of behaviour behind a small interface. His skills are small, composable, and meant to be adapted, which is what made this fork easy.
-- **Lauren Tan** wrote pstack so agents write less code of higher quality: go deep first, verify against the real thing rather than a proxy, and let the type system reject bad states. This fork takes her TypeScript rules and her blast-radius check.
+- **Lauren Tan** wrote pstack so agents write less code of higher quality: go deep first, verify against the real thing rather than a proxy, and let the type system reject bad states. This fork takes her TypeScript rules, her blast-radius check, and the two habits from her talk on shipping agent code at volume: turn every repeated correction into a check that fails (`correct`, `lint-guardrails`), and give agents a scripted way to drive the real app and prove a change works (`create-verification-skill`, `maintain-verification-skill`).
 - **Theo Browne** wrote tstack around getting a change proven, reviewed and landed. This fork takes his two cross-model review loops, which have models from other providers check the agent's work.
 
 ## Install
@@ -107,9 +107,10 @@ A user-invoked skill can call model-invoked ones, never another user-invoked one
 /blast-radius       optional: what could this break outside the diff?
 pr                  the PR body: summary, evidence, merge danger
 /retro              improve the agent's environment for next time
+/correct            turn a repeated mistake into a check that fails
 ```
 
-Off the main path: `/diagnosing-bugs` for hard bugs, `/triage` for incoming issues, `/wayfinder` for work too big for one session, `/improve-codebase-architecture` for upkeep, and `/ask-matt` when you're not sure which skill fits. `/ask-matt` knows the additions too.
+Once per app, `/create-verification-skill` writes a `verify-<app>` skill that agents use to drive the running app and capture proof for the PR's evidence; `/maintain-verification-skill` keeps its feature map current. Off the main path: `/diagnosing-bugs` for hard bugs, `/triage` for incoming issues, `/wayfinder` for work too big for one session, `/improve-codebase-architecture` for upkeep, and `/ask-matt` when you're not sure which skill fits. `/ask-matt` knows the additions too.
 
 ### Cross-model review
 
@@ -163,6 +164,9 @@ A new app with designed screens adds a detour between the spec and the tickets:
 | Push a working app's UI quality up against reference apps | `/ui-hill-climb` |
 | Tighten the types in a module | `/typescript-best-practices`, then say which module |
 | Improve the setup after a rough session | `/retro` |
+| Make agents stop repeating a mistake you keep correcting | `/correct <the mistake>` |
+| Give agents a scripted way to drive the app and prove a change | `/create-verification-skill` |
+| Bring the app's verification skill up to date | `/maintain-verification-skill` |
 
 With the plugin installed, add the `cxcskills:` prefix, for example `/cxcskills:sol-loop`.
 
@@ -217,7 +221,7 @@ General workflow tools, not code-specific.
 
 ### cxc (this fork)
 
-Adapted from pstack and tstack, plus `model-delegates`, `to-views`, `adopt-design` and `ui-hill-climb`, written for this fork. See [`skills/cxc/README.md`](./skills/cxc/README.md) and the docs pages in [`docs/cxc/`](./docs/cxc/).
+Adapted from pstack and tstack, plus `model-delegates`, `to-views`, `adopt-design` and `ui-hill-climb`, written for this fork, and `lint-guardrails`, written from the lint rules in Lauren Tan's talk. See [`skills/cxc/README.md`](./skills/cxc/README.md) and the docs pages in [`docs/cxc/`](./docs/cxc/).
 
 **User-invoked**
 
@@ -227,17 +231,21 @@ Adapted from pstack and tstack, plus `model-delegates`, `to-views`, `adopt-desig
 - **[to-views](./skills/cxc/to-views/SKILL.md)**: Turn a spec into a list of the app's views and one Claude Design brief per view, ready to prototype the screens.
 - **[adopt-design](./skills/cxc/adopt-design/SKILL.md)**: Make finished Claude Design boards the repo's source of truth for how the app looks, with tokens, a design README, and the coding standards that enforce them.
 - **[ui-hill-climb](./skills/cxc/ui-hill-climb/SKILL.md)**: Raise the app's UI quality round by round until models from different providers score every design category at a target, judged against reference apps. The technique is Theo Browne's.
+- **[correct](./skills/cxc/correct/SKILL.md)**: Turn the mistakes agents keep repeating in this repo into checks that fail, each proven red on a real past mistake. From pstack.
+- **[create-verification-skill](./skills/cxc/create-verification-skill/SKILL.md)**: Generate a project-local skill that launches this app, drives it the way a user does, and captures proof, with a feature map of what to check. From pstack.
+- **[maintain-verification-skill](./skills/cxc/maintain-verification-skill/SKILL.md)**: Audit the repo's verification skill against the app as it is now, drive every mapped feature live, and ship one PR of proven corrections. From pstack.
 
 **Model-invoked**
 
 - **[typescript-best-practices](./skills/cxc/typescript-best-practices/SKILL.md)**: Type-design rules for TypeScript and Svelte: discriminated unions, branded IDs from a verifying parse, parsing at boundaries, no `as` or `!`, exhaustive switches. `code-review` loads it for TypeScript diffs. From pstack.
 - **[model-delegates](./skills/cxc/model-delegates/SKILL.md)**: Run a read-only task on a model from another provider (Codex CLI, a Claude subagent, or any CLI you configure) and keep a record of what ran.
+- **[lint-guardrails](./skills/cxc/lint-guardrails/SKILL.md)**: Lint rules that ban a pattern agents misuse, with an error that names the fix, wired into the pre-commit hook and ratcheted for existing code. Starter bans for Svelte 5's `$effect` and raw timers. `correct` uses it.
 
 ## What was left out
 
 Other skills from the same sources were considered and skipped, because they repeat or conflict with Matt's workflow:
 
-- From pstack: `tdd` (meant only for bug fixes on request, where Matt's `tdd` is test-first for everything), `poteto-mode` (a competing workflow router), and `architect`, `correct` and `interrogate` (covered by `codebase-design`, `retro` and `code-review`).
+- From pstack: `tdd` (meant only for bug fixes on request, where Matt's `tdd` is test-first for everything), `poteto-mode` (a competing workflow router), and `architect` and `interrogate` (covered by `codebase-design` and `code-review`). `no-comments` depends on pstack's own workflow skills; `correct` covers its aim by treating comments that justify a workaround as evidence of a mistake class.
 - From tstack: `full-send`, `full-stop`, `babysit-pr` and `file-pr` (they overlap with the PR flow and the `pr` skill), plus `takeover`, `modernize` and `leaving-pr-comments`, which may come later.
 - Kun Chen's [First Mate](https://github.com/kunchenguid/firstmate), an agent distro for running a crew of agents rather than a set of skills to mix in.
 

@@ -6,7 +6,7 @@ cxcskills is a fork of mattpocock/skills (see `LICENSE`). It also adapts skills 
 
 Source: https://github.com/cursor/plugins/tree/main/pstack
 
-Adapted into `skills/cxc/typescript-best-practices` (from `typescript-best-practices`, `principle-type-system-discipline`, `principle-boundary-discipline`) and `skills/cxc/blast-radius`.
+Adapted into `skills/cxc/typescript-best-practices` (from `typescript-best-practices`, `principle-type-system-discipline`, `principle-boundary-discipline`) `skills/cxc/blast-radius`, `skills/cxc/correct`, `skills/cxc/create-verification-skill` (including its `references/feature-map-example/`), and `skills/cxc/maintain-verification-skill`. `skills/cxc/lint-guardrails` draws on `correct` and `principle-encode-lessons-in-structure`.
 
 ```text
 MIT License

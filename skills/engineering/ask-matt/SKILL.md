@@ -98,7 +98,7 @@ Off the main flow entirely.
 
 ## Additions in this fork (cxcskills)
 
-Eight skills from `skills/cxc/`, each slotting into the map above.
+Twelve skills from `skills/cxc/`, each slotting into the map above.
 
 **Greenfield with designed screens.** For a new app, or a feature with new screens, a design detour sits between the spec and the tickets: **`/grill-with-docs`** → **`/to-spec`** → `/clear` → **`/to-views`** → the boards in Claude Design → **`/adopt-design`** → **`/to-tickets`** → **`/implement`**. The boards then guide every UI ticket, unlike **`/prototype`**, whose code is thrown away once it answers its question.
 
@@ -110,4 +110,8 @@ Eight skills from `skills/cxc/`, each slotting into the map above.
 - **`/blast-radius`**: before merging a small diff you don't trust. `/code-review` asks whether the diff is built right; blast radius asks what it breaks *outside* the diff, and proves the one fact it is safe because of by running code.
 - **`/typescript-best-practices`**: vocabulary underneath, beside `/codebase-design`. Model-invoked while writing TypeScript or Svelte, and `/code-review` loads it for any TypeScript diff.
 - **`/ui-hill-climb`**: upkeep for the look of a working app. Each round captures the same screenshots, has judges from different providers score them per design category against reference apps, and fixes what they agree on, until every judge reaches the target. Reach for `/council` instead for a one-off review of a change.
+- **`/correct`**: after **`/retro`**, or whenever you catch yourself giving an agent the same correction twice. It climbs a ladder (architecture, types, a lint rule whose error names the fix, a test, and a written rule only for judgement calls), proves each check fails on a real past mistake, and records it in `CODING_STANDARDS.md`'s enforced-rules table. `/retro` suggests; `/correct` builds the check.
+- **`/lint-guardrails`**: model-invoked; the lint rung `/correct` uses. Bans with errors that name the fix, wired into the pre-commit hook and ratcheted so existing code doesn't block commits. Starter bans for Svelte 5's `$effect` and raw timers.
+- **`/create-verification-skill`**: once per app, when it runs end to end. Writes a model-invoked `verify-<app>` skill (launch, doctor, drive, evidence, cleanup, and a feature map seeded from `docs/design/views.md`) that agents use during **`/implement`** to prove changes in the running app; its screenshots go in **`pr`**'s Evidence section and its driver serves **`/ui-hill-climb`**.
+- **`/maintain-verification-skill`**: upkeep for that skill after a run of feature work. Drives every mapped feature live and ships one PR of fixes to the map, never to product code.
 - **`/model-delegates`**: the machinery `/sol-loop`, `/council` and `/blast-radius` use to reach other providers' models, read-only. Its settings (which models, which CLI for the third provider) live in a `## Model delegates` section of `CLAUDE.md` or `AGENTS.md`.
