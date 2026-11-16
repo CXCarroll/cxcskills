@@ -30,7 +30,7 @@ Work on a new branch, stacked on the current UI branch or PR if one exists, so e
 
 ## 2. Make capture repeatable
 
-Write a screenshot script in the repo, using its browser test tool (Playwright if it has one). It starts the app with demo data, visits every screen and state at every size and theme, waits for fonts and images to settle, and writes PNGs to `${TMPDIR:-/tmp}/ui-hill-climb/round-<n>/`, never inside the repo. Commit the script: it is useful long after the climb.
+Write a screenshot script in the repo, using its browser test tool (Playwright if it has one). If the repo has a `verify-<app>` skill, build the script on its driver and launch steps instead of a second harness. It starts the app with demo data, visits every screen and state at every size and theme, waits for fonts and images to settle, and writes PNGs to `${TMPDIR:-/tmp}/ui-hill-climb/round-<n>/`, never inside the repo. Commit the script: it is useful long after the climb.
 
 Run it once as **round 0**, the baseline.
 
