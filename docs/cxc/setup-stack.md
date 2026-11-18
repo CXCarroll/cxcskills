@@ -33,6 +33,9 @@ Claude's command runner can't type into an interactive prompt. Either let the sk
 **Is Effect part of the stack?**
 Only if you say yes; the default is no. When added, it lives in `src/lib/server` behind one `run(program)` bridge, with an ADR recording the boundary.
 
+**How does it work with Modern Web Guidance?**
+Chrome's guidance plugin decides when a newer browser feature needs a fallback by reading a `**Browser Support:**` line in `CLAUDE.md` or `AGENTS.md`. The skill writes one (Baseline widely available, unless your users need older browsers) and suggests installing the plugin. The same notes tell agents to type new HTML attributes by extending Svelte's element types, not with the `as any` the guidance's framework tips suggest, since the stack's lint bans both `as` and `any`.
+
 **Will it overwrite my CLAUDE.md or settings?**
 It appends a short stack section to the app's `CLAUDE.md` and merges its hook into the app's own `.claude/settings.json`. It never touches your user-level Claude Code settings.
 

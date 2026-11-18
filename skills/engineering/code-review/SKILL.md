@@ -37,6 +37,8 @@ Search the repo for every file that documents how code should be written. When `
 
 When the diff touches `.ts`, `.tsx` or `.svelte` files, call the Skill tool with "typescript-best-practices" and add its rules to the list. Paste its Rules table into the Standards sub-agent's prompt, since the sub-agent has no other access to it. A documented repo standard overrides it, like the baseline below.
 
+When the diff touches `.svelte`, `.css` or `.html` files and the `modern-web-guidance` skill is installed, call the Skill tool with "modern-web-guidance". Search it for each UI pattern or platform capability the diff builds (a dialog, a popover, a form, a data table, an animation), retrieve the matching guides, and paste their rules and browser-support notes into the Standards sub-agent's prompt. Hand-rolled code where a guide names a built-in platform feature is a finding, and so is a feature newer than the repo's `**Browser Support:**` policy without the guide's fallback. Where a guide's framework tips clash with the repo's standards or `typescript-best-practices` (an `as any` spread for a new HTML attribute, say), the repo's rules win.
+
 On top of whatever the repo documents, the Standards axis always carries the **smell baseline** below: a fixed set of Fowler code smells (_Refactoring_, ch.3) that applies even when a repo documents nothing. Two rules bind it:
 
 - **The repo overrides.** A documented repo standard always wins; where it endorses something the baseline would flag, suppress the smell.

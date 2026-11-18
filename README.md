@@ -62,6 +62,8 @@ This links every skill into `~/.claude/skills` (Claude Code) and `~/.agents/skil
 
 For a new SvelteKit app, run `/setup-stack` first (`/cxcskills:setup-stack` with the plugin). It offers to scaffold the app with `sv create`, picks settled versions of each package and checks them for conflicts, wires in Oxlint, svelte-check, lefthook, CI and a Claude Code git guardrail, and proves each gate fails on a planted violation. It also brings an existing SvelteKit app up to the same standard.
 
+Install Chrome's [Modern Web Guidance](https://developer.chrome.com/docs/modern-web-guidance) beside cxcskills: `claude plugin install modern-web-guidance@claude-plugins-official`. It keeps agents on built-in browser features instead of hand-rolled code and extra libraries. `/setup-stack` writes the browser support policy it reads, and `/code-review` uses it for `.svelte`, `.css` and `.html` changes.
+
 Then run `/setup-matt-pocock-skills` once in each repo (`/cxcskills:setup-matt-pocock-skills` with the plugin). It records your issue tracker (GitHub Issues, local markdown files, or another), your triage labels, and where the domain docs live.
 
 ### Settings for sol-loop and council

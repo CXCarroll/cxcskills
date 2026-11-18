@@ -1,6 +1,6 @@
 {
   "name": "cxcskills",
-  "version": "1.3.2-cxc.5",
+  "version": "1.3.2-cxc.6",
   "description": "CXCarroll's fork of Matt Pocock's skills: the full engineering and productivity set, plus a SvelteKit stack setup with proven quality gates, TypeScript best practices, blast radius, cross-model review (sol-loop, council, model delegates), a spec-to-designed-screens flow (to-views, adopt-design), a UI hill climb, and Lauren Tan's guardrails: turn repeated corrections into lint checks, and verify changes in the running app.",
   "author": {
     "name": "CXCarroll"
