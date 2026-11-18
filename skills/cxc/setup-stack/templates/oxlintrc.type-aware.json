@@ -1,0 +1,12 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"extends": ["./.oxlintrc.json"],
+	"rules": {
+		"typescript/no-floating-promises": "error",
+		"typescript/no-misused-promises": "error",
+		"typescript/await-thenable": "error",
+		"typescript/switch-exhaustiveness-check": "error",
+		"typescript/no-unnecessary-condition": "error"
+	},
+	"ignorePatterns": [".svelte-kit/", "build/", "drizzle/", "static/", "test-results/", "playwright-report/"]
+}

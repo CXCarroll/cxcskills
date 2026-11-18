@@ -2,7 +2,7 @@
 
 An amalgamation of skills from other creators that I use frequently.
 
-cxcskills is my working set of agent skills for building and maintaining apps with Claude Code and Codex. The base is [Matt Pocock's skills](https://github.com/mattpocock/skills), which run my day-to-day workflow: interview the idea, write a spec, split it into tickets, build test-first, review. On top of that sit skills drawn from Lauren Tan's [pstack](https://github.com/cursor/plugins/tree/main/pstack) and Theo Browne's [tstack](https://github.com/t3dotgg/tstack), adapted so they fit Matt's workflow instead of competing with it, plus a few of my own: two that take a new app from spec to designed screens, and a UI hill climb.
+cxcskills is my working set of agent skills for building and maintaining apps with Claude Code and Codex. The base is [Matt Pocock's skills](https://github.com/mattpocock/skills), which run my day-to-day workflow: interview the idea, write a spec, split it into tickets, build test-first, review. On top of that sit skills drawn from Lauren Tan's [pstack](https://github.com/cursor/plugins/tree/main/pstack) and Theo Browne's [tstack](https://github.com/t3dotgg/tstack), adapted so they fit Matt's workflow instead of competing with it, plus a few of my own: one that sets up a new app's stack and proves its gates, two that take a new app from spec to designed screens, and a UI hill climb.
 
 ## Credits
 
@@ -60,7 +60,9 @@ This links every skill into `~/.claude/skills` (Claude Code) and `~/.agents/skil
 
 ### Set up each project
 
-Run `/setup-matt-pocock-skills` once in each repo (`/cxcskills:setup-matt-pocock-skills` with the plugin). It records your issue tracker (GitHub Issues, local markdown files, or another), your triage labels, and where the domain docs live.
+For a new SvelteKit app, run `/setup-stack` first (`/cxcskills:setup-stack` with the plugin). It offers to scaffold the app with `sv create`, picks settled versions of each package and checks them for conflicts, wires in Oxlint, svelte-check, lefthook, CI and a Claude Code git guardrail, and proves each gate fails on a planted violation. It also brings an existing SvelteKit app up to the same standard.
+
+Then run `/setup-matt-pocock-skills` once in each repo (`/cxcskills:setup-matt-pocock-skills` with the plugin). It records your issue tracker (GitHub Issues, local markdown files, or another), your triage labels, and where the domain docs live.
 
 ### Settings for sol-loop and council
 
@@ -93,6 +95,7 @@ A user-invoked skill can call model-invoked ones, never another user-invoked one
 ### The workflow
 
 ```text
+/setup-stack        new app: scaffold, settle versions, wire and prove the gates
 /grill-with-docs    sharpen the idea; build GLOSSARY.md and ADRs
    |  /prototype    when a question needs running code to answer
 /to-spec            turn the conversation into a spec
@@ -137,9 +140,12 @@ A typical feature, start to finish:
 
 `/grill-with-docs`, `/to-spec` and `/to-tickets` share one session, so the spec and tickets build on the interview. Clear the context before each `/implement`, since every ticket stands on its own.
 
-A new app with designed screens adds a detour between the spec and the tickets:
+A new app starts with its stack, and designed screens add a detour between the spec and the tickets:
 
 ```text
+/setup-stack
+   (answer "Shall I template a SvelteKit project?" and the stack choices)
+/setup-matt-pocock-skills
 /grill-with-docs A portal where tenants report maintenance issues and track repairs.
 /to-spec
 /clear
@@ -154,6 +160,7 @@ A new app with designed screens adds a detour between the spec and the tickets:
 | You want to | Type |
 | --- | --- |
 | Find the right skill for a situation | `/ask-matt` |
+| Start a new SvelteKit app, or bring one up to the stack | `/setup-stack` |
 | Fix a bug that resists a first look | `/diagnosing-bugs` |
 | Review a branch against `main` | `/code-review main` |
 | Get a second model's opinion on a diff | `/sol-loop` |
@@ -221,10 +228,11 @@ General workflow tools, not code-specific.
 
 ### cxc (this fork)
 
-Adapted from pstack and tstack, plus `model-delegates`, `to-views`, `adopt-design` and `ui-hill-climb`, written for this fork, and `lint-guardrails`, written from the lint rules in Lauren Tan's talk. See [`skills/cxc/README.md`](./skills/cxc/README.md) and the docs pages in [`docs/cxc/`](./docs/cxc/).
+Adapted from pstack and tstack, plus `model-delegates`, `to-views`, `adopt-design`, `ui-hill-climb` and `setup-stack`, written for this fork, and `lint-guardrails`, written from the lint rules in Lauren Tan's talk. See [`skills/cxc/README.md`](./skills/cxc/README.md) and the docs pages in [`docs/cxc/`](./docs/cxc/).
 
 **User-invoked**
 
+- **[setup-stack](./skills/cxc/setup-stack/SKILL.md)**: Set up a SvelteKit app on the cxcskills stack, with settled versions checked for conflicts and every quality gate proven to fail on a planted violation.
 - **[sol-loop](./skills/cxc/sol-loop/SKILL.md)**: Review the current change with OpenAI's Sol model in a short loop until you both agree. From tstack.
 - **[council](./skills/cxc/council/SKILL.md)**: Get a review or feedback from three models from different providers, and loop until they agree. From tstack.
 - **[blast-radius](./skills/cxc/blast-radius/SKILL.md)**: Find what a change could break outside its diff, and prove the one fact it is safe because of by running real code. From pstack.
@@ -239,7 +247,7 @@ Adapted from pstack and tstack, plus `model-delegates`, `to-views`, `adopt-desig
 
 - **[typescript-best-practices](./skills/cxc/typescript-best-practices/SKILL.md)**: Type-design rules for TypeScript and Svelte: discriminated unions, branded IDs from a verifying parse, parsing at boundaries, no `as` or `!`, exhaustive switches. `code-review` loads it for TypeScript diffs. From pstack.
 - **[model-delegates](./skills/cxc/model-delegates/SKILL.md)**: Run a read-only task on a model from another provider (Codex CLI, a Claude subagent, or any CLI you configure) and keep a record of what ran.
-- **[lint-guardrails](./skills/cxc/lint-guardrails/SKILL.md)**: Lint rules that ban a pattern agents misuse, with an error that names the fix, wired into the pre-commit hook and ratcheted for existing code. Starter bans for Svelte 5's `$effect` and raw timers. `correct` uses it.
+- **[lint-guardrails](./skills/cxc/lint-guardrails/SKILL.md)**: Lint rules that ban a pattern agents misuse, with an error that names the fix, wired into the pre-commit hook and ratcheted for existing code. Works with ESLint or Oxlint. Starter bans for Svelte 5's `$effect` and raw timers. `correct` and `setup-stack` use it.
 
 ## What was left out
 

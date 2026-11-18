@@ -1,0 +1,63 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": ["typescript", "unicorn", "oxc", "import", "promise", "node"],
+	"categories": {
+		"correctness": "error",
+		"suspicious": "error",
+		"perf": "warn"
+	},
+	"rules": {
+		"no-debugger": "error",
+		"no-console": ["error", { "allow": ["warn", "error"] }],
+		"no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+		"eqeqeq": "error",
+		"prefer-const": "error",
+		"no-param-reassign": "error",
+		"default-case": "error",
+		"no-fallthrough": "error",
+		"no-async-promise-executor": "error",
+		"typescript/no-explicit-any": "error",
+		"typescript/no-non-null-assertion": "error",
+		"typescript/consistent-type-assertions": ["error", { "assertionStyle": "never" }],
+		"typescript/consistent-type-imports": "error",
+		"unicorn/no-null": "off",
+		"unicorn/no-empty-file": "off",
+		"unicorn/prefer-top-level-await": "off",
+		"unicorn/require-module-specifiers": "off",
+		"import/no-cycle": "error",
+		"import/no-unassigned-import": "off",
+		"promise/catch-or-return": "error",
+		"promise/prefer-await-to-then": "error",
+		"promise/no-nesting": "error",
+		"node/no-process-env": "error",
+		"no-restricted-imports": [
+			"error",
+			{
+				"patterns": [
+					{
+						"group": ["$env/*"],
+						"message": "Declare the variable in src/env.ts with defineEnvVars, then import it from $app/env/private or $app/env/public."
+					}
+				]
+			}
+		]
+	},
+	"overrides": [
+		{
+			"files": ["*.config.{ts,js}", "scripts/**", "tests/**", "e2e/**"],
+			"rules": { "node/no-process-env": "off" }
+		},
+		{
+			"files": ["src/routes/**/+server.ts", "src/routes/**/+page.server.ts", "src/routes/**/+layout.server.ts"],
+			"rules": {
+				"max-lines-per-function": ["error", { "max": 40, "skipBlankLines": true, "skipComments": true }]
+			}
+		}
+	],
+	"env": {
+		"browser": true,
+		"node": true,
+		"es2024": true
+	},
+	"ignorePatterns": [".svelte-kit/", "build/", "drizzle/", "static/", "test-results/", "playwright-report/"]
+}

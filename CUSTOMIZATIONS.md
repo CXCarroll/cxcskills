@@ -10,7 +10,7 @@ Pick one route. Both give you every skill, so installing both shows each skill t
 claude plugin uninstall mattpocock-skills@claude-plugins-official
 ```
 
-**Claude Code plugin** (the 39 promoted skills, namespaced as `/cxcskills:<name>`):
+**Claude Code plugin** (the 40 promoted skills, namespaced as `/cxcskills:<name>`):
 
 ```bash
 claude plugin marketplace add /path/to/cxcskills
@@ -40,7 +40,7 @@ It links every skill outside `deprecated/` and `misc/` into `~/.claude/skills` a
 
 These never conflict with upstream.
 
-- `skills/cxc/`: `typescript-best-practices`, `blast-radius`, `sol-loop`, `council`, `model-delegates`, `to-views`, `adopt-design`, `ui-hill-climb`, `correct`, `lint-guardrails`, `create-verification-skill`, `maintain-verification-skill`, and the bucket `README.md`.
+- `skills/cxc/`: `typescript-best-practices`, `blast-radius`, `sol-loop`, `council`, `model-delegates`, `to-views`, `adopt-design`, `ui-hill-climb`, `correct`, `lint-guardrails`, `create-verification-skill`, `maintain-verification-skill`, `setup-stack`, and the bucket `README.md`.
 - `docs/cxc/`: one docs page per cxc skill.
 - `.claude-plugin/icon.png`: the plugin icon `claude plugin validate` asks for.
 - `CUSTOMIZATIONS.md` (this file) and `THIRD_PARTY_NOTICES.md`.

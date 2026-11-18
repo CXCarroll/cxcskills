@@ -1,6 +1,6 @@
 ---
 name: lint-guardrails
-description: Lint rules that ban a pattern agents misuse, with an error that names the fix, wired into the pre-commit hook and ratcheted so existing code doesn't block a commit. Includes starter bans for SvelteKit and Svelte 5 (`$effect`, raw timers). Use when adding or changing a lint rule, banning an API or pattern, setting up ESLint in a repo, or turning a repeated correction into a check.
+description: Lint rules that ban a pattern agents misuse, with an error that names the fix, wired into the pre-commit hook and ratcheted so existing code doesn't block a commit. Works with ESLint or Oxlint. Includes starter bans for SvelteKit and Svelte 5 (`$effect`, raw timers). Use when adding or changing a lint rule, banning an API or pattern, setting up ESLint in a repo, or turning a repeated correction into a check.
 metadata:
   credits:
     skill: "the lint rules from \"turning slop into gold\" and pstack's correct and encode-lessons-in-structure"
@@ -14,7 +14,9 @@ A **guardrail** is a check that runs without anyone remembering it: the pre-comm
 
 ## 1. Find the repo's guardrail
 
-Read `eslint.config.js` (flat config), the `lint` script in `package.json`, `.husky/pre-commit`, the lint-staged config (`.lintstagedrc*` or `lint-staged` in `package.json`), and `.github/workflows/`. Then name the gap, if any:
+If the repo lints with Oxlint (an `.oxlintrc.json`, as `setup-stack` sets up), follow the **Oxlint** notes in steps 3 to 5 instead of the ESLint wiring. Oxlint runs ESLint-style rules as JS plugins, inside `.ts`, `.js` and the `<script>` of `.svelte` files, and lefthook already runs it on staged files.
+
+Otherwise read `eslint.config.js` (flat config), the `lint` script in `package.json`, `.husky/pre-commit`, the lint-staged config (`.lintstagedrc*` or `lint-staged` in `package.json`), and `.github/workflows/`. Then name the gap, if any:
 
 - **ESLint never runs at commit.** A common default is lint-staged running only Prettier, so ESLint runs only when someone types `bun run lint`. Add a key for code files to the lint-staged config, beside the existing Prettier key:
 
@@ -37,16 +39,29 @@ Use an existing rule when one fits and its message can name the fix: the Svelte 
 
 ## 3. Starter rules for SvelteKit and Svelte 5
 
-Copy [references/guardrails.js](references/guardrails.js) to `eslint/guardrails.js`, import it in `eslint.config.js`, and spread it in after the Svelte configs. Set `EFFECT_HOME` and `TIMER_HOME` at the top of the file to folders that suit the repo.
+Copy [references/guardrails.js](references/guardrails.js) to `eslint/guardrails.js`, import its `guardrails` config in `eslint.config.js` (`import { guardrails } from './eslint/guardrails.js'`), and spread it in after the Svelte configs. Set `EFFECT_HOME` and `TIMER_HOME` at the top of the file to folders that suit the repo.
+
+**Oxlint:** copy it to `lint/guardrails.js` instead. Its default export is the plugin. Load and scope it in `.oxlintrc.json`, since Oxlint ignores the `files` and `ignores` in the ESLint config:
+
+```json
+"jsPlugins": ["./lint/guardrails.js"],
+"overrides": [
+  { "files": ["src/**/*.{svelte,ts,js}"], "rules": { "guardrails/no-effect": "error", "guardrails/no-timers": "error" } },
+  { "files": ["src/lib/server/**", "src/**/*.server.{ts,js}", "src/**/+server.{ts,js}", "src/**/*.{test,spec}.{ts,js}", "src/lib/effects/**"], "rules": { "guardrails/no-effect": "off" } },
+  { "files": ["src/lib/server/**", "src/**/*.server.{ts,js}", "src/**/+server.{ts,js}", "src/**/*.{test,spec}.{ts,js}", "src/lib/timing/**"], "rules": { "guardrails/no-timers": "off" } }
+]
+```
+
+Append these to any `overrides` already there; later entries win. Keep the home folders in step with `EFFECT_HOME` and `TIMER_HOME`.
 
 | Rule | Bans | The fix its error names |
 | --- | --- | --- |
 | `guardrails/no-effect` | `$effect`, `$effect.pre`, `$effect.root` outside the effect home | `$derived` for values, the event handler for user actions, `load` or `{#await}` for data, `{@attach}` for DOM behaviour; a real outside sync as a helper in the effect home |
 | `guardrails/no-timers` | `setTimeout`, `setInterval`, `requestAnimationFrame`, `requestIdleCallback` (also on `window`, `globalThis`, `self`) in client code outside the timer home | `await tick()` to wait for the DOM, transitions or `svelte/motion` to animate, fixing the update order; a real schedule as a self-clearing helper in the timer home |
 
-Both skip server code (`src/lib/server/`, `*.server.ts`, `+server.ts`) and tests. `no-timers` also skips a function that shadows the global's name. Both fire inside markup expressions as well as `<script>`.
+Both skip server code (`src/lib/server/`, `*.server.ts`, `+server.ts`) and tests. `no-timers` also skips a function that shadows the global's name. Under ESLint both fire inside markup expressions as well as `<script>`. Oxlint doesn't parse Svelte markup, so there a timer inside a template expression (`onclick={() => setTimeout(...)}`) gets through; the `<script>` is covered.
 
-The server and client split needs no rule: SvelteKit already refuses to let client code import `$lib/server/*` or `*.server.ts` modules. Keep server-only code there and the framework enforces it.
+The server and client split needs no rule: SvelteKit already refuses to let client code import modules under `src/lib/server/` or `*.server.ts` modules. Keep server-only code there and the framework enforces it.
 
 ## 4. Ratchet existing code
 
@@ -63,6 +78,8 @@ Commit the `eslint-suppressions.json` this writes. From then on:
 
 Name each rule with `--suppress-rule`, never `--suppress-all`, which would also hide unrelated errors. Never add `--pass-on-unpruned-suppressions` to the hook: it lets counts drift back up.
 
+**Oxlint** has no bulk suppressions. Fix the existing occurrences first when there are few; otherwise mark each one with `// oxlint-disable-next-line <rule> -- existing, see <issue>` and file one issue to remove them, so new code is still held to the rule.
+
 ## 5. Prove it
 
 A rule you have never seen fail proves nothing. For each new rule:
@@ -71,6 +88,8 @@ A rule you have never seen fail proves nothing. For each new rule:
 2. **Home:** the same code in the rule's home folder, and in server code where the rule skips it, passes.
 3. **Hook:** stage the red example and run `bunx lint-staged`. The commit is refused.
 4. **Clean:** remove the example; `bunx eslint .` passes (after the ratchet, if there was one).
+
+**Oxlint:** use `bunx oxlint <file>` for red and home, `bunx lefthook run pre-commit` with the example staged for the hook, and `bun run lint` for clean.
 
 If the repo's `CODING_STANDARDS.md` has an `## Enforced rules` table, add a row for the rule, and delete any written rule or `CLAUDE.md` line it replaces.
 

@@ -85,7 +85,10 @@ const noTimers = {
 
 const plugin = { meta: { name: 'guardrails' }, rules: { 'no-effect': noEffect, 'no-timers': noTimers } };
 
-// Server code, tests, and each rule's own helper folder are exempt.
+// Oxlint loads the plugin itself (`jsPlugins` in .oxlintrc.json) and scopes it with `overrides`.
+export default plugin;
+
+// ESLint spreads this config. Server code, tests, and each rule's own helper folder are exempt.
 const SERVER_AND_TESTS = [
 	'src/lib/server/**',
 	'src/**/*.server.{ts,js}',
@@ -93,7 +96,7 @@ const SERVER_AND_TESTS = [
 	'src/**/*.{test,spec}.{ts,js}'
 ];
 
-export default [
+export const guardrails = [
 	{
 		files: ['src/**/*.{svelte,ts,js}'],
 		ignores: SERVER_AND_TESTS,

@@ -1,0 +1,5 @@
+interface:
+  display_name: "Setup Stack"
+  short_description: "Set up a SvelteKit app with proven gates"
+policy:
+  allow_implicit_invocation: false

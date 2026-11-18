@@ -1,0 +1,20 @@
+# Thin pre-commit: format and lint the staged files only. Everything slower runs in CI.
+pre-commit:
+  parallel: true
+  jobs:
+    - name: prettier
+      glob: '*.{js,ts,svelte,css,json,md,yml,yaml}'
+      run: bunx prettier --write {staged_files}
+      stage_fixed: true
+    - name: oxlint
+      glob: '*.{js,ts,svelte}'
+      run: bunx oxlint --deny-warnings {staged_files}
+
+# Local stand-in for branch protection: main only changes by merging a pull request.
+# A script job, because run jobs are skipped when the push has no changed files.
+pre-push:
+  jobs:
+    - name: block push to main
+      script: block-push-to-main.sh
+      runner: bash
+      use_stdin: true
